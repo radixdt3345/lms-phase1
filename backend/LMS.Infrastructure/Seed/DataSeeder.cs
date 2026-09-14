@@ -97,10 +97,123 @@ public class DataSeeder
             else
             {
                 _logger.LogDebug("Department already exists, skipping: {DeptCode}", deptData.Code);
+
+        await _context.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Department seeding complete. {Count} default departments ensured.", defaultDepartments.Length);
+    }
+
+    /// Seeds the 5 default leave types required by AC-28 and their associated default policies.
+    /// Idempotent — safe to run multiple times.
+    /// </summary>
+    public async Task SeedLeaveTypesAsync(CancellationToken cancellationToken = default)
+    {
+        // AC-28: exactly these 5 leave types must be present on first deployment
+        var defaultLeaveTypes = new[]
+        {
+            new
+            {
+                Name = LeaveTypeNames.CasualLeave,
+                Code = LeaveTypeNames.CasualLeaveCode,
+                Description = "Casual / personal leave for short-notice personal needs.",
+                AnnualDays = 12,
+                RequiresAttachment = false,
+                RequiresHrApproval = false
+            },
+            new
+            {
+                Name = LeaveTypeNames.SickLeave,
+                Code = LeaveTypeNames.SickLeaveCode,
+                Description = "Medical leave for illness or injury. Medical certificate required for 3+ consecutive days.",
+                AnnualDays = 6,
+                RequiresAttachment = true,
+                RequiresHrApproval = true
+            },
+            new
+            {
+                Name = LeaveTypeNames.EarnedLeave,
+                Code = LeaveTypeNames.EarnedLeaveCode,
+                Description = "Earned / privileged leave accrued through service. 1 day granted per year.",
+                AnnualDays = 1,
+                RequiresAttachment = false,
+                RequiresHrApproval = false
+            },
+            new
+            {
+                Name = LeaveTypeNames.CompOff,
+                Code = LeaveTypeNames.CompOffCode,
+                Description = "Compensatory off granted for working on a holiday or weekend.",
+                AnnualDays = 0,
+                RequiresAttachment = false,
+                RequiresHrApproval = false
+            },
+            new
+            {
+                Name = LeaveTypeNames.UnpaidLeave,
+                Code = LeaveTypeNames.UnpaidLeaveCode,
+                Description = "Leave without pay, taken when paid leave balance is exhausted.",
+                AnnualDays = 0,
+                RequiresAttachment = false,
+                RequiresHrApproval = false
+            }
+        };
+
+        var now = DateTime.UtcNow;
+        var yearStart = new DateTime(now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        foreach (var ltData in defaultLeaveTypes)
+        {
+            var existing = await _context.LeaveTypes
+                .FirstOrDefaultAsync(lt => lt.Code == ltData.Code, cancellationToken);
+
+            if (existing is null)
+            {
+                var leaveType = new LeaveType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = ltData.Name,
+                    Code = ltData.Code,
+                    Description = ltData.Description,
+                    AnnualDays = ltData.AnnualDays,
+                    RequiresAttachment = ltData.RequiresAttachment,
+                    RequiresHrApproval = ltData.RequiresHrApproval,
+                    IsActive = true,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                _context.LeaveTypes.Add(leaveType);
+
+                // Seed a default policy for each leave type
+                var policy = new LeavePolicy
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Default Policy — {ltData.Name}",
+                    LeaveTypeId = leaveType.Id,
+                    LeaveType = leaveType,
+                    ApplicableToRole = null,
+                    AnnualAllotment = ltData.AnnualDays,
+                    MaxCarryForward = 0,
+                    MaxConsecutiveDays = 30,
+                    MinNoticeDays = ltData.Code == LeaveTypeNames.CasualLeaveCode ? 0 : 1,
+                    AccrualMonthly = false,
+                    AccrualRate = null,
+                    IsActive = true,
+                    EffectiveFrom = yearStart,
+                    EffectiveTo = null,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                _context.LeavePolicies.Add(policy);
+                _logger.LogInformation("Seeding leave type: {LeaveTypeName}", ltData.Name);
+            }
+            else
+            {
+                _logger.LogDebug("Leave type already exists, skipping: {LeaveTypeName}", ltData.Name);
             }
         }
 
         await _context.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("Department seeding complete. {Count} default departments ensured.", defaultDepartments.Length);
+        _logger.LogInformation("Leave type seeding complete. {Count} default leave types ensured.", defaultLeaveTypes.Length);
     }
 }
