@@ -1,0 +1,49 @@
+using LMS.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace LMS.Infrastructure.Data;
+
+public class LmsDbContext : DbContext
+{
+    public LmsDbContext(DbContextOptions<LmsDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(LmsDbContext).Assembly);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+        var now = DateTime.UtcNow;
+
+        foreach (var entry in entries)
+        {
+            if (entry.Entity is User user)
+            {
+                if (entry.State == EntityState.Added)
+                    user.CreatedAt = now;
+                user.UpdatedAt = now;
+            }
+            else if (entry.Entity is Role role && entry.State == EntityState.Added)
+            {
+                role.CreatedAt = now;
+            }
+            else if (entry.Entity is UserRole userRole && entry.State == EntityState.Added)
+            {
+                userRole.AssignedAt = now;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+}
