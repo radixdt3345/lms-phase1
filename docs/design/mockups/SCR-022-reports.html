@@ -1,0 +1,298 @@
+<title>Reports — LMS</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+  .report-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+  .rtab { padding: 10px 20px; font-size: 14px; font-weight: 500; border: none; background: none;
+    color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s; }
+  .rtab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .rtab:hover:not(.active) { color: var(--text-primary); }
+  .rtab:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 2px; }
+
+  .report-panel { display: none; }
+  .report-panel.active { display: block; }
+
+  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .filter-row .form-group { margin: 0; flex: 1; min-width: 140px; }
+  .filter-row label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+  .filter-row select,
+  .filter-row input[type="date"],
+  .filter-row input[type="text"] {
+    width: 100%; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 6px;
+    font-size: 13px; background: var(--surface); color: var(--text-primary); box-sizing: border-box;
+  }
+  .filter-actions { display: flex; gap: 8px; align-self: flex-end; }
+
+  .chart-container {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px; margin-bottom: 20px;
+  }
+  .chart-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; }
+  .bar-group { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .bar-stack { display: flex; flex-direction: column; justify-content: flex-end; width: 100%; border-radius: 4px 4px 0 0; overflow: hidden; }
+  .bar-seg { width: 100%; }
+  .bar-label { font-size: 10px; color: var(--text-secondary); text-align: center; }
+  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+  .legend-i { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+  .legend-sq { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
+
+  .line-chart-svg { width: 100%; height: 140px; }
+
+  .summary-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+  .summary-card .val { font-size: 26px; font-weight: 700; color: var(--primary); }
+  .summary-card .lbl { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  .export-bar { display: flex; gap: 10px; margin-bottom: 16px; justify-content: flex-end; }
+</style>
+
+<body>
+<div class="app-shell">
+  <!-- Sidebar (HR Admin) -->
+  <aside class="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark" aria-hidden="true">L</div>
+        <span class="sidebar-logo-text">LeaveMS</span>
+      </div>
+    </div>
+    <nav>
+      <ul class="sidebar-nav" role="list">
+        <li><a href="SCR-004-hr-admin-dashboard.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Dashboard
+        </a></li>
+        <li><a href="SCR-015-employee-list.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Employees
+        </a></li>
+        <li><a href="SCR-022-reports.html" class="sidebar-link active" aria-current="page">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          Reports
+        </a></li>
+        <li><a href="SCR-023-audit-log.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93C9.33 17.79 7 14.5 7 11V7.18L12 5z"/></svg>
+          Audit Log
+        </a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar" role="banner">
+    <div class="topbar-left">
+      <h1 class="topbar-title">Reports &amp; Analytics</h1>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0zM7.05 18.36l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0z"/></svg>
+      </button>
+      <div class="topbar-avatar" title="HR Admin" role="img" aria-label="User: HR Admin">HR</div>
+    </div>
+  </header>
+
+  <main class="main-content" id="main-content" tabindex="-1">
+
+    <!-- Report Tabs -->
+    <div class="report-tabs" role="tablist" aria-label="Report categories">
+      <button class="rtab active" role="tab" aria-selected="true" id="rtab-overview" onclick="switchReport('overview')">Leave Overview</button>
+      <button class="rtab" role="tab" aria-selected="false" id="rtab-balance" onclick="switchReport('balance')">Balance Report</button>
+      <button class="rtab" role="tab" aria-selected="false" id="rtab-comp" onclick="switchReport('comp')">Comp-Off Report</button>
+      <button class="rtab" role="tab" aria-selected="false" id="rtab-dept" onclick="switchReport('dept')">By Department</button>
+    </div>
+
+    <!-- Overview Panel -->
+    <div class="report-panel active" id="panel-overview" role="tabpanel" aria-labelledby="rtab-overview">
+
+      <!-- Filters -->
+      <div class="filter-row" role="search" aria-label="Filter report parameters">
+        <div class="form-group">
+          <label for="ov-dept">Department</label>
+          <select id="ov-dept" aria-label="Filter by department"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Finance</option><option>HR</option><option>Operations</option></select>
+        </div>
+        <div class="form-group">
+          <label for="ov-type">Leave Type</label>
+          <select id="ov-type" aria-label="Filter by leave type"><option>All Types</option><option>Annual Leave</option><option>Sick Leave</option><option>Comp-Off</option><option>Maternity</option><option>Paternity</option></select>
+        </div>
+        <div class="form-group">
+          <label for="ov-from">From</label>
+          <input type="date" id="ov-from" value="2024-01-01" aria-label="From date">
+        </div>
+        <div class="form-group">
+          <label for="ov-to">To</label>
+          <input type="date" id="ov-to" value="2024-12-31" aria-label="To date">
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary btn-sm">Generate</button>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards" aria-label="Key metrics for selected period">
+        <div class="summary-card"><div class="val">1,284</div><div class="lbl">Leave Days Taken</div></div>
+        <div class="summary-card"><div class="val">142</div><div class="lbl">Total Requests</div></div>
+        <div class="summary-card"><div class="val">94%</div><div class="lbl">Approval Rate</div></div>
+        <div class="summary-card"><div class="val">8.8</div><div class="lbl">Avg Days per Employee</div></div>
+        <div class="summary-card"><div class="val">3</div><div class="lbl">Rejected Requests</div></div>
+        <div class="summary-card"><div class="val">1.2</div><div class="lbl">Avg Wait (days)</div></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="chart-container" role="img" aria-label="Stacked bar chart: monthly leave days by type for 2024">
+          <div class="chart-title">Monthly Leave Days by Type (2024)</div>
+          <div class="bar-chart" aria-hidden="true">
+            <div class="bar-group"><div class="bar-stack" style="height:100px;"><div class="bar-seg" style="height:60px;background:var(--primary);"></div><div class="bar-seg" style="height:20px;background:#e53935;"></div><div class="bar-seg" style="height:20px;background:#f57c00;"></div></div><span class="bar-label">Jan</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:80px;"><div class="bar-seg" style="height:50px;background:var(--primary);"></div><div class="bar-seg" style="height:15px;background:#e53935;"></div><div class="bar-seg" style="height:15px;background:#f57c00;"></div></div><span class="bar-label">Feb</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:110px;"><div class="bar-seg" style="height:70px;background:var(--primary);"></div><div class="bar-seg" style="height:22px;background:#e53935;"></div><div class="bar-seg" style="height:18px;background:#f57c00;"></div></div><span class="bar-label">Mar</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:90px;"><div class="bar-seg" style="height:55px;background:var(--primary);"></div><div class="bar-seg" style="height:20px;background:#e53935;"></div><div class="bar-seg" style="height:15px;background:#f57c00;"></div></div><span class="bar-label">Apr</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:95px;"><div class="bar-seg" style="height:60px;background:var(--primary);"></div><div class="bar-seg" style="height:20px;background:#e53935;"></div><div class="bar-seg" style="height:15px;background:#f57c00;"></div></div><span class="bar-label">May</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:75px;"><div class="bar-seg" style="height:45px;background:var(--primary);"></div><div class="bar-seg" style="height:18px;background:#e53935;"></div><div class="bar-seg" style="height:12px;background:#f57c00;"></div></div><span class="bar-label">Jun</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:120px;"><div class="bar-seg" style="height:80px;background:var(--primary);"></div><div class="bar-seg" style="height:25px;background:#e53935;"></div><div class="bar-seg" style="height:15px;background:#f57c00;"></div></div><span class="bar-label">Jul</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:115px;"><div class="bar-seg" style="height:75px;background:var(--primary);"></div><div class="bar-seg" style="height:25px;background:#e53935;"></div><div class="bar-seg" style="height:15px;background:#f57c00;"></div></div><span class="bar-label">Aug</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:85px;"><div class="bar-seg" style="height:55px;background:var(--primary);"></div><div class="bar-seg" style="height:18px;background:#e53935;"></div><div class="bar-seg" style="height:12px;background:#f57c00;"></div></div><span class="bar-label">Sep</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:90px;"><div class="bar-seg" style="height:60px;background:var(--primary);"></div><div class="bar-seg" style="height:18px;background:#e53935;"></div><div class="bar-seg" style="height:12px;background:#f57c00;"></div></div><span class="bar-label">Oct</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:88px;"><div class="bar-seg" style="height:55px;background:var(--primary);"></div><div class="bar-seg" style="height:20px;background:#e53935;"></div><div class="bar-seg" style="height:13px;background:#f57c00;"></div></div><span class="bar-label">Nov</span></div>
+            <div class="bar-group"><div class="bar-stack" style="height:145px;"><div class="bar-seg" style="height:95px;background:var(--primary);"></div><div class="bar-seg" style="height:30px;background:#e53935;"></div><div class="bar-seg" style="height:20px;background:#f57c00;"></div></div><span class="bar-label">Dec</span></div>
+          </div>
+          <div class="chart-legend" aria-hidden="true">
+            <div class="legend-i"><div class="legend-sq" style="background:var(--primary)"></div>Annual</div>
+            <div class="legend-i"><div class="legend-sq" style="background:#e53935"></div>Sick</div>
+            <div class="legend-i"><div class="legend-sq" style="background:#f57c00"></div>Comp-Off</div>
+          </div>
+        </div>
+
+        <!-- Leave by Department Horizontal Bar -->
+        <div class="chart-container" role="img" aria-label="Horizontal bar chart: leave utilisation by department">
+          <div class="chart-title">Leave Utilisation by Department (%)</div>
+          <div style="display:flex;flex-direction:column;gap:10px;" aria-hidden="true">
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">Finance</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:85%;height:100%;background:#e53935;border-radius:3px;"></div></div></div>
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">Engineering</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:72%;height:100%;background:var(--primary);border-radius:3px;"></div></div></div>
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">Operations</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:62%;height:100%;background:var(--primary);border-radius:3px;"></div></div></div>
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">Sales</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:58%;height:100%;background:var(--primary);border-radius:3px;"></div></div></div>
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">Marketing</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:45%;height:100%;background:var(--primary);border-radius:3px;"></div></div></div>
+            <div><div style="font-size:12px;color:var(--text-secondary);margin-bottom:3px">HR</div>
+              <div style="height:18px;background:var(--border);border-radius:3px;"><div style="width:40%;height:100%;background:var(--primary);border-radius:3px;"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export & Data Table -->
+      <div class="export-bar">
+        <button class="btn btn-secondary btn-sm" onclick="alert('CSV export: would trigger download of leave-report-2024.csv')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:middle;margin-right:4px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export CSV
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Leave Requests (Jan – Dec 2024)</h2>
+          <span style="font-size:13px;color:var(--text-secondary);">142 records</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table role="table" aria-label="Leave request report data">
+            <thead>
+              <tr>
+                <th scope="col">Employee</th>
+                <th scope="col">Department</th>
+                <th scope="col">Type</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Days</th>
+                <th scope="col">Status</th>
+                <th scope="col">Approved By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Priya Nair</td><td>Engineering</td><td>Annual Leave</td><td>Dec 23</td><td>Dec 27</td><td>5</td><td><span class="badge badge-warning">Pending</span></td><td>—</td></tr>
+              <tr><td>Vikram Kumar</td><td>Engineering</td><td>Annual Leave</td><td>Dec 13</td><td>Dec 20</td><td>6</td><td><span class="badge badge-success">Approved</span></td><td>Rajan Pillai</td></tr>
+              <tr><td>Shreya Ramesh</td><td>Engineering</td><td>Sick Leave</td><td>Dec 16</td><td>Dec 16</td><td>1</td><td><span class="badge badge-success">Approved</span></td><td>Rajan Pillai</td></tr>
+              <tr><td>Arun Menon</td><td>Engineering</td><td>Comp-Off</td><td>Dec 30</td><td>Dec 30</td><td>1</td><td><span class="badge badge-warning">Pending</span></td><td>—</td></tr>
+              <tr><td>Kezia Thomas</td><td>Engineering</td><td>Annual Leave</td><td>Dec 23</td><td>Dec 26</td><td>4</td><td><span class="badge badge-warning">Pending</span></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" style="margin-top:16px;" aria-label="Pagination navigation">
+          <button class="pagination-btn" disabled aria-label="Previous page" aria-disabled="true">‹</button>
+          <button class="pagination-btn active" aria-current="page" aria-label="Page 1, current">1</button>
+          <button class="pagination-btn" aria-label="Page 2">2</button>
+          <button class="pagination-btn" aria-label="Page 3">3</button>
+          <span class="pagination-ellipsis">…</span>
+          <button class="pagination-btn" aria-label="Page 29">29</button>
+          <button class="pagination-btn" aria-label="Next page">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Balance Panel (placeholder) -->
+    <div class="report-panel" id="panel-balance" role="tabpanel" aria-labelledby="rtab-balance">
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <h3>Balance Report</h3>
+        <p>Select filters above and click Generate to load the leave balance report for all employees.</p>
+        <button class="btn btn-primary" onclick="switchReport('overview')">Back to Overview</button>
+      </div>
+    </div>
+
+    <!-- Comp-Off Panel (placeholder) -->
+    <div class="report-panel" id="panel-comp" role="tabpanel" aria-labelledby="rtab-comp">
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <h3>Comp-Off Report</h3>
+        <p>View earned comp-off credits, expiry dates, and utilisation across the team.</p>
+        <button class="btn btn-primary" onclick="switchReport('overview')">Back to Overview</button>
+      </div>
+    </div>
+
+    <!-- By Department Panel (placeholder) -->
+    <div class="report-panel" id="panel-dept" role="tabpanel" aria-labelledby="rtab-dept">
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+        <h3>By Department</h3>
+        <p>Department-level breakdown of leave usage, approval rates, and balances.</p>
+        <button class="btn btn-primary" onclick="switchReport('overview')">Back to Overview</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Theme
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  function applyTheme() { root.setAttribute('data-theme', dark ? 'dark' : 'light'); }
+  applyTheme();
+  btn.addEventListener('click', () => { dark = !dark; applyTheme(); });
+
+  // Report tabs
+  function switchReport(tab) {
+    document.querySelectorAll('.rtab').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.report-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('rtab-' + tab).classList.add('active');
+    document.getElementById('rtab-' + tab).setAttribute('aria-selected','true');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  // Pagination
+  document.querySelectorAll('.pagination-btn:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (this.textContent === '‹' || this.textContent === '›') return;
+      document.querySelectorAll('.pagination-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+      this.classList.add('active');
+      this.setAttribute('aria-current','page');
+    });
+  });
+</script>
