@@ -1,0 +1,355 @@
+<title>My Dashboard — LMS</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+  .quick-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .quick-actions .btn { display: flex; align-items: center; gap: 8px; }
+  .quick-actions .btn svg { flex-shrink: 0; }
+  .balance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .upcoming-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+  .history-section {}
+  @media (max-width: 900px) { .upcoming-section { grid-template-columns: 1fr; } }
+
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline li {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .timeline li:last-child { border-bottom: none; }
+  .tl-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+  .tl-dot.annual { background: var(--primary); }
+  .tl-dot.sick { background: #e53935; }
+  .tl-dot.comp { background: #f57c00; }
+  .tl-dot.holiday { background: #388e3c; }
+  .tl-body { flex: 1; }
+  .tl-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .tl-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .notification-list { list-style: none; padding: 0; margin: 0; }
+  .notification-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .notification-list li:last-child { border-bottom: none; }
+  .notif-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .notif-text { color: var(--text-primary); }
+  .notif-time { color: var(--text-disabled); font-size: 11px; margin-top: 2px; }
+</style>
+
+<body>
+<div class="app-shell">
+  <!-- Sidebar -->
+  <aside class="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark" aria-hidden="true">L</div>
+        <span class="sidebar-logo-text">LeaveMS</span>
+      </div>
+    </div>
+    <nav>
+      <ul class="sidebar-nav" role="list">
+        <li><a href="SCR-002-employee-dashboard.html" class="sidebar-link active" aria-current="page">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Dashboard
+        </a></li>
+        <li><a href="SCR-007-apply-for-leave.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          Apply for Leave
+        </a></li>
+        <li><a href="SCR-008-my-leave-history.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 18.36C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+          Leave History
+        </a></li>
+        <li><a href="SCR-009-team-calendar.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Team Calendar
+        </a></li>
+        <li><a href="SCR-010-comp-off.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+          Comp-Off
+        </a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar" role="banner">
+    <div class="topbar-left">
+      <h1 class="topbar-title">My Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0zM7.05 18.36l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0z"/></svg>
+      </button>
+      <div class="topbar-avatar" title="Aisha Mehta" role="img" aria-label="User: Aisha Mehta">AM</div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="main-content" tabindex="-1">
+
+    <!-- Quick Actions -->
+    <section aria-label="Quick actions">
+      <div class="quick-actions">
+        <a href="SCR-007-apply-for-leave.html" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Apply for Leave
+        </a>
+        <a href="SCR-010-comp-off.html" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Request Comp-Off
+        </a>
+        <a href="SCR-008-my-leave-history.html" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 18.36C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+          View History
+        </a>
+      </div>
+    </section>
+
+    <!-- Leave Balance Cards -->
+    <section aria-label="Leave balances">
+      <h2 class="section-heading">Leave Balances</h2>
+      <div class="balance-grid">
+        <div class="balance-card">
+          <div class="balance-header">
+            <span class="balance-label">Annual Leave</span>
+            <span class="badge badge-info">AL</span>
+          </div>
+          <div class="balance-days">12</div>
+          <div class="balance-sub">of 18 days available</div>
+          <div class="balance-bar" role="progressbar" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100" aria-label="Annual leave: 12 of 18 days used">
+            <div class="balance-fill" style="width:67%"></div>
+          </div>
+          <div class="balance-meta">6 days used · 0 pending</div>
+        </div>
+        <div class="balance-card">
+          <div class="balance-header">
+            <span class="balance-label">Sick Leave</span>
+            <span class="badge badge-danger">SL</span>
+          </div>
+          <div class="balance-days">8</div>
+          <div class="balance-sub">of 9 days available</div>
+          <div class="balance-bar" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" aria-label="Sick leave: 8 of 9 days">
+            <div class="balance-fill" style="width:89%; background: var(--error);"></div>
+          </div>
+          <div class="balance-meta">1 day used · 0 pending</div>
+        </div>
+        <div class="balance-card">
+          <div class="balance-header">
+            <span class="balance-label">Comp-Off</span>
+            <span class="badge badge-warning">CO</span>
+          </div>
+          <div class="balance-days">2</div>
+          <div class="balance-sub">of 2 days available</div>
+          <div class="balance-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Comp-off: 2 of 2 days">
+            <div class="balance-fill" style="width:100%; background: var(--warning);"></div>
+          </div>
+          <div class="balance-meta">0 used · Expires 15 Jan 2025</div>
+        </div>
+        <div class="balance-card">
+          <div class="balance-header">
+            <span class="balance-label">Maternity</span>
+            <span class="badge badge-success">ML</span>
+          </div>
+          <div class="balance-days">84</div>
+          <div class="balance-sub">of 84 days available</div>
+          <div class="balance-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Maternity leave: 84 of 84 days">
+            <div class="balance-fill" style="width:100%; background: var(--success);"></div>
+          </div>
+          <div class="balance-meta">Full balance available</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming + Notifications -->
+    <div class="upcoming-section">
+      <!-- Upcoming Leaves -->
+      <section aria-label="Upcoming leaves">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Upcoming Leave</h2>
+            <a href="SCR-008-my-leave-history.html" class="btn btn-text btn-sm">View all</a>
+          </div>
+          <ul class="timeline" aria-label="Upcoming leave list">
+            <li>
+              <div class="tl-dot annual" aria-hidden="true"></div>
+              <div class="tl-body">
+                <div class="tl-title">Annual Leave <span class="badge badge-warning" style="margin-left:6px">Pending</span></div>
+                <div class="tl-meta">Dec 23 – Dec 27, 2024 · 5 days (sandwich rule: includes Dec 25 holiday)</div>
+              </div>
+            </li>
+            <li>
+              <div class="tl-dot comp" aria-hidden="true"></div>
+              <div class="tl-body">
+                <div class="tl-title">Comp-Off <span class="badge badge-success" style="margin-left:6px">Approved</span></div>
+                <div class="tl-meta">Jan 3, 2025 · 1 day</div>
+              </div>
+            </li>
+          </ul>
+          <div class="empty-state" style="display:none" aria-hidden="true">
+            <p>No upcoming leaves scheduled</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications -->
+      <section aria-label="Recent notifications">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Notifications</h2>
+            <span class="badge badge-info">2 new</span>
+          </div>
+          <ul class="notification-list" aria-label="Notification list">
+            <li>
+              <span class="notif-icon" aria-hidden="true">✅</span>
+              <div>
+                <div class="notif-text">Your comp-off request for Jan 3 was <strong>approved</strong> by Rajan Pillai.</div>
+                <div class="notif-time">2 hours ago</div>
+              </div>
+            </li>
+            <li>
+              <span class="notif-icon" aria-hidden="true">⏳</span>
+              <div>
+                <div class="notif-text">Annual leave request (Dec 23–27) is awaiting manager approval.</div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </li>
+            <li>
+              <span class="notif-icon" aria-hidden="true">🎉</span>
+              <div>
+                <div class="notif-text">Public holiday: <strong>Christmas Day</strong> on Dec 25, 2024.</div>
+                <div class="notif-time">3 days ago</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- Recent Leave History -->
+    <section aria-label="Recent leave history">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Leave Requests</h2>
+          <a href="SCR-008-my-leave-history.html" class="btn btn-text btn-sm">See all history</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table role="table" aria-label="Recent leave requests">
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Days</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Annual Leave</td>
+                <td>Dec 23, 2024</td>
+                <td>Dec 27, 2024</td>
+                <td>5</td>
+                <td>Year-end vacation</td>
+                <td><span class="badge badge-warning">Pending</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="cancelLeave(this)">Cancel</button></td>
+              </tr>
+              <tr>
+                <td>Comp-Off</td>
+                <td>Jan 3, 2025</td>
+                <td>Jan 3, 2025</td>
+                <td>1</td>
+                <td>Overtime Dec 7</td>
+                <td><span class="badge badge-success">Approved</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Sick Leave</td>
+                <td>Nov 12, 2024</td>
+                <td>Nov 12, 2024</td>
+                <td>1</td>
+                <td>Fever</td>
+                <td><span class="badge badge-success">Approved</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Annual Leave</td>
+                <td>Oct 2, 2024</td>
+                <td>Oct 4, 2024</td>
+                <td>3</td>
+                <td>Personal travel</td>
+                <td><span class="badge badge-danger">Rejected</span></td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Cancel confirmation modal -->
+<div class="modal-backdrop" id="cancelModal" role="dialog" aria-modal="true" aria-labelledby="cancelTitle" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="cancelTitle">Cancel Leave Request</h2>
+      <button class="modal-close" id="closeCancelModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to cancel this leave request? This action cannot be undone and balances will be restored.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelNo">Keep Request</button>
+      <button class="btn btn-danger" id="cancelYes">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Theme
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  function applyTheme() { root.setAttribute('data-theme', dark ? 'dark' : 'light'); }
+  applyTheme();
+  btn.addEventListener('click', () => { dark = !dark; applyTheme(); });
+
+  // Cancel modal
+  let targetRow = null;
+  function cancelLeave(el) {
+    targetRow = el.closest('tr');
+    document.getElementById('cancelModal').hidden = false;
+    document.getElementById('cancelYes').focus();
+  }
+  document.getElementById('cancelNo').addEventListener('click', () => {
+    document.getElementById('cancelModal').hidden = true;
+  });
+  document.getElementById('closeCancelModal').addEventListener('click', () => {
+    document.getElementById('cancelModal').hidden = true;
+  });
+  document.getElementById('cancelYes').addEventListener('click', () => {
+    if (targetRow) {
+      targetRow.querySelector('.badge').textContent = 'Cancelled';
+      targetRow.querySelector('.badge').className = 'badge badge-neutral';
+      targetRow.querySelector('.btn-danger').remove();
+    }
+    document.getElementById('cancelModal').hidden = false;
+    document.getElementById('cancelModal').hidden = true;
+  });
+  // Close modal on backdrop click
+  document.getElementById('cancelModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('cancelModal')) {
+      document.getElementById('cancelModal').hidden = true;
+    }
+  });
+  // ESC close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.getElementById('cancelModal').hidden = true;
+  });
+</script>
