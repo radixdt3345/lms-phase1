@@ -57,4 +57,50 @@ public class DataSeeder
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Role seeding complete. {Count} system roles ensured.", systemRoles.Length);
     }
+
+    /// <summary>
+    /// Seeds default departments idempotently (FR-19). Safe to run multiple times.
+    /// Each department gets a sensible default overlap_limit (FR-26).
+    /// </summary>
+    public async Task SeedDepartmentsAsync(CancellationToken cancellationToken = default)
+    {
+        var defaultDepartments = new[]
+        {
+            new { Name = "Human Resources", Code = "HR",  Description = "HR Administration and People Operations", OverlapLimit = 2 },
+            new { Name = "Engineering",     Code = "ENG", Description = "Software Engineering and Technical Development", OverlapLimit = 3 },
+            new { Name = "Finance",         Code = "FIN", Description = "Finance, Accounting and Budgeting", OverlapLimit = 2 },
+            new { Name = "Operations",      Code = "OPS", Description = "Business Operations and Process Management", OverlapLimit = 2 }
+        };
+
+        foreach (var deptData in defaultDepartments)
+        {
+            var existing = await _context.Departments
+                .FirstOrDefaultAsync(d => d.Code == deptData.Code, cancellationToken);
+
+            if (existing is null)
+            {
+                var department = new Department
+                {
+                    Id = Guid.NewGuid(),
+                    Name = deptData.Name,
+                    Code = deptData.Code,
+                    Description = deptData.Description,
+                    OverlapLimit = deptData.OverlapLimit,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.Departments.Add(department);
+                _logger.LogInformation("Seeding department: {DeptCode} — {DeptName}", deptData.Code, deptData.Name);
+            }
+            else
+            {
+                _logger.LogDebug("Department already exists, skipping: {DeptCode}", deptData.Code);
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Department seeding complete. {Count} default departments ensured.", defaultDepartments.Length);
+    }
 }

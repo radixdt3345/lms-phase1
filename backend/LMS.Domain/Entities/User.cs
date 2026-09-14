@@ -22,6 +22,9 @@ public class User
     public DateTime? DeletedAt { get; set; }
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+    /// <summary>Navigation property for the assigned department (FK: DepartmentId).</summary>
+    public Department? DepartmentEntity { get; set; }
 }
 
 public enum UserStatus
