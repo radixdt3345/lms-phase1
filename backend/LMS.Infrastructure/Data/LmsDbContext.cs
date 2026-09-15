@@ -26,6 +26,11 @@ public class LmsDbContext : DbContext
     public DbSet<PublicHoliday> PublicHolidays => Set<PublicHoliday>();
     public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
 
+    // Employee Management
+    public DbSet<EmployeeProfile> EmployeeProfiles => Set<EmployeeProfile>();
+    public DbSet<EmployeeLeaveBalance> EmployeeLeaveBalances => Set<EmployeeLeaveBalance>();
+    public DbSet<EmployeeDocument> EmployeeDocuments => Set<EmployeeDocument>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -38,6 +43,7 @@ public class LmsDbContext : DbContext
             .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
 
         var now = DateTime.UtcNow;
+        var nowOffset = DateTimeOffset.UtcNow;
 
         foreach (var entry in entries)
         {
@@ -87,10 +93,26 @@ public class LmsDbContext : DbContext
             }
             else if (entry.Entity is SystemConfig systemConfig)
             {
-                var nowOffset = DateTimeOffset.UtcNow;
                 if (entry.State == EntityState.Added)
                     systemConfig.CreatedAt = nowOffset;
                 systemConfig.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is EmployeeProfile employeeProfile)
+            {
+                if (entry.State == EntityState.Added)
+                    employeeProfile.CreatedAt = nowOffset;
+                employeeProfile.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is EmployeeLeaveBalance employeeLeaveBalance)
+            {
+                if (entry.State == EntityState.Added)
+                    employeeLeaveBalance.CreatedAt = nowOffset;
+                employeeLeaveBalance.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is EmployeeDocument employeeDocument)
+            {
+                if (entry.State == EntityState.Added)
+                    employeeDocument.CreatedAt = nowOffset;
             }
         }
 
