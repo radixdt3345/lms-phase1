@@ -258,6 +258,170 @@ namespace LMS.Infrastructure.Migrations
                     b.ToTable("user_roles");
                 });
 
+            modelBuilder.Entity("LMS.Domain.Entities.LeaveType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("AnnualDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("annual_days");
+
+                    b.Property<bool>("RequiresAttachment")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("requires_attachment");
+
+                    b.Property<bool>("RequiresHrApproval")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("requires_hr_approval");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("idx_leave_types_code");
+
+                    b.HasIndex("DeletedAt")
+                        .HasDatabaseName("idx_leave_types_deleted_at");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("idx_leave_types_is_active");
+
+                    b.ToTable("leave_types");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.LeavePolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("LeaveTypeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("leave_type_id");
+
+                    b.Property<string>("ApplicableToRole")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("applicable_to_role");
+
+                    b.Property<int>("AnnualAllotment")
+                        .HasColumnType("integer")
+                        .HasColumnName("annual_allotment");
+
+                    b.Property<int>("MaxCarryForward")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("max_carry_forward");
+
+                    b.Property<int>("MaxConsecutiveDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(30)
+                        .HasColumnName("max_consecutive_days");
+
+                    b.Property<int>("MinNoticeDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("min_notice_days");
+
+                    b.Property<bool>("AccrualMonthly")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("accrual_monthly");
+
+                    b.Property<decimal?>("AccrualRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("accrual_rate");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime>("EffectiveFrom")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_from");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_to");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaveTypeId")
+                        .HasDatabaseName("idx_leave_policies_leave_type_id");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("idx_leave_policies_is_active");
+
+                    b.HasIndex("EffectiveFrom")
+                        .HasDatabaseName("idx_leave_policies_effective_from");
+
+                    b.ToTable("leave_policies");
             modelBuilder.Entity("LMS.Domain.Entities.User", b =>
                 {
                     b.HasOne("LMS.Domain.Entities.Department", "DepartmentEntity")
@@ -266,7 +430,6 @@ namespace LMS.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("DepartmentEntity");
-                });
 
             modelBuilder.Entity("LMS.Domain.Entities.UserRole", b =>
                 {
@@ -289,7 +452,16 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Users");
-                });
+            modelBuilder.Entity("LMS.Domain.Entities.LeavePolicy", b =>
+                {
+                    b.HasOne("LMS.Domain.Entities.LeaveType", "LeaveType")
+                        .WithMany("LeavePolicies")
+                        .HasForeignKey("LeaveTypeId")
+                        .HasConstraintName("fk_leave_policies_leave_type_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LeaveType");
 
             modelBuilder.Entity("LMS.Domain.Entities.Role", b =>
                 {
@@ -299,6 +471,11 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Domain.Entities.User", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.LeaveType", b =>
+                {
+                    b.Navigation("LeavePolicies");
                 });
 #pragma warning restore 612, 618
         }

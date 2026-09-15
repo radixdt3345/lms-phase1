@@ -9,10 +9,15 @@ public class LmsDbContext : DbContext
     {
     }
 
+    // Auth / Identity
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<Department> Departments => Set<Department>();
+
+    // Leave Policy
+    public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
+    public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +53,18 @@ public class LmsDbContext : DbContext
             else if (entry.Entity is UserRole userRole && entry.State == EntityState.Added)
             {
                 userRole.AssignedAt = now;
+            }
+            else if (entry.Entity is LeaveType leaveType)
+            {
+                if (entry.State == EntityState.Added)
+                    leaveType.CreatedAt = now;
+                leaveType.UpdatedAt = now;
+            }
+            else if (entry.Entity is LeavePolicy leavePolicy)
+            {
+                if (entry.State == EntityState.Added)
+                    leavePolicy.CreatedAt = now;
+                leavePolicy.UpdatedAt = now;
             }
         }
 
