@@ -6,6 +6,7 @@ import { CircularProgress, Box } from '@mui/material';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
 const LeaveTypeListPage = lazy(() => import('../pages/LeavePolicy/LeaveTypeListPage'));
+const PublicHolidayListPage = lazy(() => import('../pages/PublicHolidays/PublicHolidayListPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -41,6 +42,15 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <LeaveTypeListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/public-holidays"
+            element={
+              <ProtectedRoute>
+                <PublicHolidayListPage />
               </ProtectedRoute>
             }
           />
