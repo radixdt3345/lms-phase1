@@ -12,3 +12,14 @@ export interface UserProfile {
   departmentId?: string;
   status: string;
 }
+
+export interface DepartmentDto {
+  id: string;
+  name: string;
+  code: string;
+  overlapLimit: number;
+  isActive: boolean;
+  createdAt: string;
+}
+export interface CreateDepartmentDto { name: string; code: string; overlapLimit?: number; }
+export interface UpdateDepartmentDto { name?: string; code?: string; overlapLimit?: number; isActive?: boolean; }
