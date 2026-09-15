@@ -281,4 +281,50 @@ public class DataSeeder
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Public holiday seeding complete. {Count} 2026 Indian holidays ensured.", holidays2026India.Length);
     }
+
+    /// <summary>
+    /// Seeds default system configuration values. Idempotent — skips keys that already exist.
+    /// </summary>
+    public async Task SeedSystemConfigsAsync(CancellationToken cancellationToken = default)
+    {
+        var defaultConfigs = new[]
+        {
+            new { Key = "LeaveYearStartMonth",           Value = "1",                                            Description = "Month number (1-12) when the leave year begins. 1 = January.", IsEditable = true },
+            new { Key = "MaxLeaveDaysPerApplication",    Value = "30",                                           Description = "Maximum number of days allowed in a single leave application.", IsEditable = true },
+            new { Key = "DefaultCountryCode",            Value = "IN",                                           Description = "ISO 3166-1 alpha-2 country code used as the default for public holidays.", IsEditable = true },
+            new { Key = "WorkWeekDays",                  Value = "Monday,Tuesday,Wednesday,Thursday,Friday",     Description = "Comma-separated list of working days in the week.", IsEditable = true }
+        };
+
+        var now = DateTimeOffset.UtcNow;
+
+        foreach (var configData in defaultConfigs)
+        {
+            var existing = await _context.SystemConfigs
+                .FirstOrDefaultAsync(c => c.Key == configData.Key, cancellationToken);
+
+            if (existing is null)
+            {
+                var config = new SystemConfig
+                {
+                    Id = Guid.NewGuid(),
+                    Key = configData.Key,
+                    Value = configData.Value,
+                    Description = configData.Description,
+                    IsEditable = configData.IsEditable,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                _context.SystemConfigs.Add(config);
+                _logger.LogInformation("Seeding system config: {ConfigKey}", configData.Key);
+            }
+            else
+            {
+                _logger.LogDebug("System config already exists, skipping: {ConfigKey}", configData.Key);
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("System config seeding complete. {Count} default configs ensured.", defaultConfigs.Length);
+    }
 }
