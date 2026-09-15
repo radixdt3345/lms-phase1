@@ -19,6 +19,9 @@ public class LmsDbContext : DbContext
     public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
     public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
 
+    // Notifications
+    public DbSet<Notification> Notifications => Set<Notification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -65,6 +68,12 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     leavePolicy.CreatedAt = now;
                 leavePolicy.UpdatedAt = now;
+            }
+            else if (entry.Entity is Notification notification)
+            {
+                if (entry.State == EntityState.Added)
+                    notification.CreatedAt = now;
+                notification.UpdatedAt = now;
             }
         }
 
