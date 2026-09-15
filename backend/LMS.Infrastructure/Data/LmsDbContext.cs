@@ -22,6 +22,9 @@ public class LmsDbContext : DbContext
     // Notifications
     public DbSet<Notification> Notifications => Set<Notification>();
 
+    // Public Holidays / Master Data
+    public DbSet<PublicHoliday> PublicHolidays => Set<PublicHoliday>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -74,6 +77,12 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     notification.CreatedAt = now;
                 notification.UpdatedAt = now;
+            }
+            else if (entry.Entity is PublicHoliday publicHoliday)
+            {
+                if (entry.State == EntityState.Added)
+                    publicHoliday.CreatedAt = now;
+                publicHoliday.UpdatedAt = now;
             }
         }
 
