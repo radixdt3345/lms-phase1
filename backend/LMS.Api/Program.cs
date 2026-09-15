@@ -17,6 +17,7 @@ builder.Services.AddDbContext<LmsDbContext>(options =>
 
 // ── Application services ──────────────────────────────────────────────────────
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILeavePolicyService, LeavePolicyService>();
 
 // ── Authentication — Azure AD JWT Bearer ─────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
