@@ -24,6 +24,7 @@ public class LmsDbContext : DbContext
 
     // Public Holidays / Master Data
     public DbSet<PublicHoliday> PublicHolidays => Set<PublicHoliday>();
+    public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +84,13 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     publicHoliday.CreatedAt = now;
                 publicHoliday.UpdatedAt = now;
+            }
+            else if (entry.Entity is SystemConfig systemConfig)
+            {
+                var nowOffset = DateTimeOffset.UtcNow;
+                if (entry.State == EntityState.Added)
+                    systemConfig.CreatedAt = nowOffset;
+                systemConfig.UpdatedAt = nowOffset;
             }
         }
 
