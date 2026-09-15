@@ -92,16 +92,19 @@ public class DataSeeder
                 };
 
                 _context.Departments.Add(department);
-                _logger.LogInformation("Seeding department: {DeptCode} — {DeptName}", deptData.Code, deptData.Name);
+                _logger.LogInformation("Seeding department: {DeptCode} - {DeptName}", deptData.Code, deptData.Name);
             }
             else
             {
                 _logger.LogDebug("Department already exists, skipping: {DeptCode}", deptData.Code);
+            }
+        }
 
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Department seeding complete. {Count} default departments ensured.", defaultDepartments.Length);
     }
 
+    /// <summary>
     /// Seeds the 5 default leave types required by AC-28 and their associated default policies.
     /// Idempotent — safe to run multiple times.
     /// </summary>
@@ -187,7 +190,7 @@ public class DataSeeder
                 var policy = new LeavePolicy
                 {
                     Id = Guid.NewGuid(),
-                    Name = $"Default Policy — {ltData.Name}",
+                    Name = $"Default Policy - {ltData.Name}",
                     LeaveTypeId = leaveType.Id,
                     LeaveType = leaveType,
                     ApplicableToRole = null,
@@ -215,5 +218,67 @@ public class DataSeeder
 
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Leave type seeding complete. {Count} default leave types ensured.", defaultLeaveTypes.Length);
+    }
+
+    /// <summary>
+    /// Seeds 2026 Indian national public holidays idempotently (FR-76, FR-91).
+    /// Safe to run multiple times — checks by Name + Year + CountryCode before inserting.
+    /// </summary>
+    public async Task SeedPublicHolidaysAsync(CancellationToken cancellationToken = default)
+    {
+        const string countryCode = "IN";
+        const int year = 2026;
+
+        var holidays2026India = new[]
+        {
+            new { Name = "Republic Day",        Date = new DateOnly(2026, 1, 26),  IsOptional = false },
+            new { Name = "Holi",                Date = new DateOnly(2026, 3, 17),  IsOptional = false },
+            new { Name = "Eid ul-Fitr",         Date = new DateOnly(2026, 3, 31),  IsOptional = false },
+            new { Name = "Good Friday",         Date = new DateOnly(2026, 4, 3),   IsOptional = false },
+            new { Name = "Ram Navami",          Date = new DateOnly(2026, 4, 6),   IsOptional = false },
+            new { Name = "Ambedkar Jayanti",    Date = new DateOnly(2026, 4, 14),  IsOptional = false },
+            new { Name = "Labour Day",          Date = new DateOnly(2026, 5, 1),   IsOptional = false },
+            new { Name = "Eid ul-Adha",         Date = new DateOnly(2026, 6, 7),   IsOptional = false },
+            new { Name = "Independence Day",    Date = new DateOnly(2026, 8, 15),  IsOptional = false },
+            new { Name = "Gandhi Jayanti",      Date = new DateOnly(2026, 10, 2),  IsOptional = false },
+            new { Name = "Dussehra",            Date = new DateOnly(2026, 10, 20), IsOptional = false },
+            new { Name = "Diwali",              Date = new DateOnly(2026, 11, 9),  IsOptional = false },
+            new { Name = "Guru Nanak Jayanti",  Date = new DateOnly(2026, 11, 23), IsOptional = false },
+            new { Name = "Christmas Day",       Date = new DateOnly(2026, 12, 25), IsOptional = false }
+        };
+
+        foreach (var holidayData in holidays2026India)
+        {
+            var existing = await _context.PublicHolidays
+                .FirstOrDefaultAsync(
+                    h => h.Name == holidayData.Name && h.Year == year && h.CountryCode == countryCode,
+                    cancellationToken);
+
+            if (existing is null)
+            {
+                var holiday = new PublicHoliday
+                {
+                    Id = Guid.NewGuid(),
+                    Name = holidayData.Name,
+                    Date = holidayData.Date,
+                    Year = year,
+                    CountryCode = countryCode,
+                    IsOptional = holidayData.IsOptional,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.PublicHolidays.Add(holiday);
+                _logger.LogInformation("Seeding public holiday: {HolidayName} ({Date})", holidayData.Name, holidayData.Date);
+            }
+            else
+            {
+                _logger.LogDebug("Public holiday already exists, skipping: {HolidayName}", holidayData.Name);
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Public holiday seeding complete. {Count} 2026 Indian holidays ensured.", holidays2026India.Length);
     }
 }

@@ -517,6 +517,7 @@ namespace LMS.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("DepartmentEntity");
+                });
 
             modelBuilder.Entity("LMS.Domain.Entities.UserRole", b =>
                 {
@@ -539,6 +540,8 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Users");
+                });
+
             modelBuilder.Entity("LMS.Domain.Entities.LeavePolicy", b =>
                 {
                     b.HasOne("LMS.Domain.Entities.LeaveType", "LeaveType")
@@ -549,6 +552,7 @@ namespace LMS.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("LeaveType");
+                });
 
             modelBuilder.Entity("LMS.Domain.Entities.Role", b =>
                 {
@@ -576,6 +580,73 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Navigation("RecipientUser");
                 });
+
+            modelBuilder.Entity("LMS.Domain.Entities.PublicHoliday", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer")
+                        .HasColumnName("year");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("country_code");
+
+                    b.Property<bool>("IsOptional")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_optional");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Year", "Date" })
+                        .HasDatabaseName("idx_public_holidays_year_date");
+
+                    b.HasIndex(new[] { "Year", "IsActive" })
+                        .HasDatabaseName("idx_public_holidays_year_is_active");
+
+                    b.HasIndex("CountryCode")
+                        .HasDatabaseName("idx_public_holidays_country_code");
+
+                    b.ToTable("public_holidays");
+                });
+
 #pragma warning restore 612, 618
         }
     }
