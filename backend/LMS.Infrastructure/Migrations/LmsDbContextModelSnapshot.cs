@@ -422,6 +422,93 @@ namespace LMS.Infrastructure.Migrations
                         .HasDatabaseName("idx_leave_policies_effective_from");
 
                     b.ToTable("leave_policies");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("RecipientUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recipient_user_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("type");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("message");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_read");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("read_at");
+
+                    b.Property<Guid?>("RelatedEntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("related_record_id");
+
+                    b.Property<string>("RelatedEntityType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("related_record_type");
+
+                    b.Property<string>("EmailStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("not_sent")
+                        .HasColumnName("email_status");
+
+                    b.Property<int>("EmailRetryCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("email_retry_count");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientUserId")
+                        .HasDatabaseName("idx_notifications_recipient_user_id");
+
+                    b.HasIndex(new[] { "RecipientUserId", "IsRead" })
+                        .HasDatabaseName("idx_notifications_recipient_user_id_is_read");
+
+                    b.HasIndex("CreatedAt")
+                        .IsDescending(true)
+                        .HasDatabaseName("idx_notifications_created_at_desc");
+
+                    b.ToTable("notifications");
+                });
+
             modelBuilder.Entity("LMS.Domain.Entities.User", b =>
                 {
                     b.HasOne("LMS.Domain.Entities.Department", "DepartmentEntity")
@@ -476,6 +563,18 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Domain.Entities.LeaveType", b =>
                 {
                     b.Navigation("LeavePolicies");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("LMS.Domain.Entities.User", "RecipientUser")
+                        .WithMany()
+                        .HasForeignKey("RecipientUserId")
+                        .HasConstraintName("fk_notifications_recipient_user_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RecipientUser");
                 });
 #pragma warning restore 612, 618
         }
