@@ -22,6 +22,71 @@ namespace LMS.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LMS.Domain.Entities.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("OverlapLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("overlap_limit");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("idx_departments_name");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("idx_departments_code");
+
+                    b.HasIndex("DeletedAt")
+                        .HasDatabaseName("idx_departments_deleted_at");
+
+                    b.ToTable("departments");
+                });
+
             modelBuilder.Entity("LMS.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -157,6 +222,9 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("Status")
                         .HasDatabaseName("idx_users_status");
 
+                    b.HasIndex("DepartmentId")
+                        .HasDatabaseName("idx_users_department_id");
+
                     b.ToTable("users");
                 });
 
@@ -190,6 +258,16 @@ namespace LMS.Infrastructure.Migrations
                     b.ToTable("user_roles");
                 });
 
+            modelBuilder.Entity("LMS.Domain.Entities.User", b =>
+                {
+                    b.HasOne("LMS.Domain.Entities.Department", "DepartmentEntity")
+                        .WithMany("Users")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("DepartmentEntity");
+                });
+
             modelBuilder.Entity("LMS.Domain.Entities.UserRole", b =>
                 {
                     b.HasOne("LMS.Domain.Entities.Role", "Role")
@@ -206,6 +284,11 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Navigation("Role");
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LMS.Domain.Entities.Role", b =>

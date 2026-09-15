@@ -12,6 +12,7 @@ public class LmsDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<Department> Departments => Set<Department>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +34,12 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     user.CreatedAt = now;
                 user.UpdatedAt = now;
+            }
+            else if (entry.Entity is Department department)
+            {
+                if (entry.State == EntityState.Added)
+                    department.CreatedAt = now;
+                department.UpdatedAt = now;
             }
             else if (entry.Entity is Role role && entry.State == EntityState.Added)
             {

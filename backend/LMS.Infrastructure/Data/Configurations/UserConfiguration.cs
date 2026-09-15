@@ -97,5 +97,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.Status)
             .HasDatabaseName("idx_users_status");
+
+        builder.HasIndex(u => u.DepartmentId)
+            .HasDatabaseName("idx_users_department_id");
     }
 }
