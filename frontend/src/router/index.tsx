@@ -4,6 +4,7 @@ import LoginPage from '../pages/Login/LoginPage';
 import { CircularProgress, Box } from '@mui/material';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
+const LeaveTypeListPage = lazy(() => import('../pages/LeavePolicy/LeaveTypeListPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -17,6 +18,7 @@ const AppRouter: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPlaceholder />} />
           <Route path="/departments" element={<DepartmentListPage />} />
+          <Route path="/leave-types" element={<LeaveTypeListPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Suspense>

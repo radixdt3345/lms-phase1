@@ -11,12 +11,19 @@ export default defineConfig({
     alias: {
       'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime.js'),
       'react/jsx-dev-runtime': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime.js'),
+      'use-sync-external-store/with-selector.js': path.resolve('./node_modules/use-sync-external-store/shim/with-selector.js'),
+      'use-sync-external-store/with-selector': path.resolve('./node_modules/use-sync-external-store/shim/with-selector.js'),
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/tests/setup.ts',
+    server: {
+      deps: {
+        inline: [/@mui\//, /@emotion\//, /react-redux/, /use-sync-external-store/, /react-is/],
+      },
+    },
   },
   server: {
     proxy: { '/api': { target: 'http://localhost:5000', changeOrigin: true } },
