@@ -23,3 +23,36 @@ export interface DepartmentDto {
 }
 export interface CreateDepartmentDto { name: string; code: string; overlapLimit?: number; }
 export interface UpdateDepartmentDto { name?: string; code?: string; overlapLimit?: number; isActive?: boolean; }
+
+export interface LeaveTypeDto {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  annualDays: number;
+  requiresAttachment: boolean;
+  requiresHrApproval: boolean;
+  isActive: boolean;
+}
+export interface LeavePolicyDto {
+  id: string;
+  leaveTypeId: string;
+  leaveTypeName: string;
+  annualAllotment: number;
+  maxCarryForward: number;
+  maxConsecutiveDays: number;
+  minNoticeDays: number;
+  accruedMonthly: boolean;
+  accrualRate: number;
+  effectiveFrom: string;
+  effectiveTo?: string;
+}
+export interface CreateLeaveTypeDto {
+  name: string; code: string; annualDays?: number;
+  requiresAttachment?: boolean; requiresHrApproval?: boolean; description?: string;
+}
+export interface CreateLeavePolicyDto {
+  leaveTypeId: string; annualAllotment: number; maxCarryForward?: number;
+  maxConsecutiveDays?: number; minNoticeDays?: number;
+  accruedMonthly?: boolean; accrualRate?: number; effectiveFrom: string; effectiveTo?: string;
+}
