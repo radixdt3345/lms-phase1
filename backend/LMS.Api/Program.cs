@@ -17,6 +17,7 @@ builder.Services.AddDbContext<LmsDbContext>(options =>
 
 // ── Application services ──────────────────────────────────────────────────────
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<ILeavePolicyService, LeavePolicyService>();
 builder.Services.AddScoped<IPublicHolidayService, PublicHolidayService>();
 
