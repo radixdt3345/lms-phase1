@@ -24,6 +24,10 @@ const departmentSlice = createSlice({
       .addCase(fetchDepartmentsThunk.fulfilled, (state, action) => { state.loading = false; state.departments = action.payload; })
       .addCase(fetchDepartmentsThunk.rejected, (state, action) => { state.loading = false; state.error = action.error.message ?? 'Failed'; })
       .addCase(createDepartmentThunk.fulfilled, (state, action) => { state.departments.push(action.payload); })
+      .addCase(updateDepartmentThunk.fulfilled, (state, action) => {
+        const idx = state.departments.findIndex(d => d.id === action.payload.id);
+        if (idx !== -1) state.departments[idx] = action.payload;
+      })
       .addCase(deleteDepartmentThunk.fulfilled, (state, action) => {
         const id = action.meta.arg;
         state.departments = state.departments.filter(d => d.id !== id);
