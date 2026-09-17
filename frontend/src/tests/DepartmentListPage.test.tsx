@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -83,5 +83,24 @@ describe('DepartmentListPage', () => {
     expect(result[0]).toHaveProperty('id');
     expect(result[0]).toHaveProperty('name');
     expect(result[0]).toHaveProperty('code');
+  });
+
+  it('UT-F03-INT-001: displays error alert when fetch fails', async () => {
+    vi.mocked(departmentApi.fetchDepartments).mockRejectedValue(new Error('Network Error'));
+    const store = makeStore();
+    render(<Provider store={store}><MemoryRouter><DepartmentListPage /></MemoryRouter></Provider>);
+    await waitFor(() => {
+      expect(screen.getByTestId('departments-error')).toBeTruthy();
+    });
+  });
+
+  it('UT-F03-INT-002: updateDepartmentThunk replaces department in state', async () => {
+    const store = makeStore(mockDepts);
+    const updated: DepartmentDto = { ...mockDepts[0], name: 'Human Resources' };
+    vi.mocked(departmentApi.updateDepartment).mockResolvedValue(updated);
+    const { updateDepartmentThunk } = await import('../store/departmentSlice');
+    await store.dispatch(updateDepartmentThunk({ id: '1', dto: { name: 'Human Resources' } }));
+    const state = store.getState();
+    expect(state.departments.departments.find(d => d.id === '1')?.name).toBe('Human Resources');
   });
 });
