@@ -31,6 +31,9 @@ public class LmsDbContext : DbContext
     public DbSet<EmployeeLeaveBalance> EmployeeLeaveBalances => Set<EmployeeLeaveBalance>();
     public DbSet<EmployeeDocument> EmployeeDocuments => Set<EmployeeDocument>();
 
+    // Audit Trail (F-13) — append-only, never updated or deleted
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
