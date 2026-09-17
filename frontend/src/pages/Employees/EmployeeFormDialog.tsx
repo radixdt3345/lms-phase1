@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, TextField, Box, MenuItem,
 } from '@mui/material';
 import { createEmployeeThunk, updateEmployeeThunk } from '../../store/employeeSlice';
-import type { AppDispatch } from '../../store/store';
+import type { AppDispatch, RootState } from '../../store/store';
 import type { EmployeeProfileDto, EmploymentType, EmployeeStatus } from '../../types';
 
 interface Props {
   open: boolean;
-  onClose: () => void;
+  onClose: (saved: boolean) => void;
   employee?: EmployeeProfileDto;
 }
 
@@ -19,6 +19,7 @@ const EMPLOYEE_STATUSES: EmployeeStatus[] = ['Active', 'Inactive', 'OnLeave', 'T
 
 const EmployeeFormDialog: React.FC<Props> = ({ open, onClose, employee }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { departments } = useSelector((state: RootState) => state.departments);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -54,25 +55,29 @@ const EmployeeFormDialog: React.FC<Props> = ({ open, onClose, employee }) => {
     }
   }, [employee, open]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !employeeCode || !jobTitle || !departmentId || !dateOfJoining) return;
 
     if (employee) {
-      dispatch(updateEmployeeThunk({
+      await dispatch(updateEmployeeThunk({
         id: employee.id,
         dto: { firstName, lastName, email, jobTitle, departmentId, dateOfJoining, employmentType, status },
       }));
     } else {
-      dispatch(createEmployeeThunk({
+      await dispatch(createEmployeeThunk({
         firstName, lastName, email, employeeCode, jobTitle,
         departmentId, dateOfJoining, employmentType, status,
       }));
     }
-    onClose();
+    onClose(true);
+  };
+
+  const handleCancel = () => {
+    onClose(false);
   };
 
   return (
-    <Dialog open={open} onClose={onClose} data-testid="employee-form-dialog" maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleCancel} data-testid="employee-form-dialog" maxWidth="sm" fullWidth>
       <DialogTitle>{employee ? 'Edit Employee' : 'Add Employee'}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
@@ -119,13 +124,21 @@ const EmployeeFormDialog: React.FC<Props> = ({ open, onClose, employee }) => {
             slotProps={{ htmlInput: { 'data-testid': 'employee-jobtitle-input' } }}
           />
           <TextField
-            label="Department ID"
+            select
+            label="Department"
             value={departmentId}
             onChange={(e) => setDepartmentId(e.target.value)}
             required
             fullWidth
             slotProps={{ htmlInput: { 'data-testid': 'employee-department-input' } }}
-          />
+          >
+            <MenuItem value="">Select Department</MenuItem>
+            {departments.map((dept) => (
+              <MenuItem key={dept.id} value={dept.id}>
+                {dept.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             label="Date of Joining"
             type="date"
@@ -162,7 +175,7 @@ const EmployeeFormDialog: React.FC<Props> = ({ open, onClose, employee }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} data-testid="employee-cancel-btn">Cancel</Button>
+        <Button onClick={handleCancel} data-testid="employee-cancel-btn">Cancel</Button>
         <Button onClick={handleSubmit} variant="contained" data-testid="employee-submit-btn">
           {employee ? 'Update' : 'Create'}
         </Button>
