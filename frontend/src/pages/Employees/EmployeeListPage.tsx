@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Button, CircularProgress, IconButton, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, Typography,
-  Paper, Chip, Alert, TextField, TablePagination,
+  Paper, Chip, Alert, TextField, TablePagination, MenuItem,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchEmployeesThunk, deleteEmployeeThunk } from '../../store/employeeSlice';
+import { fetchDepartmentsThunk } from '../../store/departmentSlice';
 import type { AppDispatch, RootState } from '../../store/store';
 import type { EmployeeProfileDto } from '../../types';
 import EmployeeFormDialog from './EmployeeFormDialog';
@@ -18,16 +19,31 @@ const EmployeeListPage: React.FC = () => {
   const { employees, loading, error, totalCount, pageNumber, pageSize } = useSelector(
     (state: RootState) => state.employees
   );
+  const { departments } = useSelector((state: RootState) => state.departments);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfileDto | undefined>(undefined);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [departmentFilter, setDepartmentFilter] = useState('');
+
+  const loadEmployees = useCallback(() => {
+    dispatch(fetchEmployeesThunk({
+      pageNumber: page + 1,
+      pageSize: rowsPerPage,
+      search: search || undefined,
+      departmentId: departmentFilter || undefined,
+    }));
+  }, [dispatch, page, rowsPerPage, search, departmentFilter]);
 
   useEffect(() => {
-    dispatch(fetchEmployeesThunk({ pageNumber: page + 1, pageSize: rowsPerPage, search: search || undefined }));
-  }, [dispatch, page, rowsPerPage, search]);
+    dispatch(fetchDepartmentsThunk());
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadEmployees();
+  }, [loadEmployees]);
 
   const handleAdd = () => {
     setSelectedEmployee(undefined);
@@ -41,12 +57,26 @@ const EmployeeListPage: React.FC = () => {
 
   const handleDelete = (emp: EmployeeProfileDto) => {
     if (window.confirm(`Delete employee "${emp.firstName} ${emp.lastName}"?`)) {
-      dispatch(deleteEmployeeThunk(emp.id));
+      dispatch(deleteEmployeeThunk(emp.id)).then(() => {
+        loadEmployees();
+      });
+    }
+  };
+
+  const handleDialogClose = (saved: boolean) => {
+    setDialogOpen(false);
+    if (saved) {
+      loadEmployees();
     }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+    setPage(0);
+  };
+
+  const handleDepartmentFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartmentFilter(e.target.value);
     setPage(0);
   };
 
@@ -86,7 +116,7 @@ const EmployeeListPage: React.FC = () => {
           </Button>
         </Box>
 
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
           <TextField
             label="Search employees"
             value={search}
@@ -94,6 +124,22 @@ const EmployeeListPage: React.FC = () => {
             size="small"
             slotProps={{ htmlInput: { 'data-testid': 'employee-search-input' } }}
           />
+          <TextField
+            select
+            label="Filter by Department"
+            value={departmentFilter}
+            onChange={handleDepartmentFilterChange}
+            size="small"
+            sx={{ minWidth: 200 }}
+            slotProps={{ htmlInput: { 'data-testid': 'employee-dept-filter' } }}
+          >
+            <MenuItem value="">All Departments</MenuItem>
+            {departments.map((dept) => (
+              <MenuItem key={dept.id} value={dept.id}>
+                {dept.name}
+              </MenuItem>
+            ))}
+          </TextField>
         </Box>
 
         {error && (
@@ -176,7 +222,7 @@ const EmployeeListPage: React.FC = () => {
 
         <EmployeeFormDialog
           open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
+          onClose={handleDialogClose}
           employee={selectedEmployee}
         />
       </Box>
