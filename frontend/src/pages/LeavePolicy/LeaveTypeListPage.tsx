@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, CircularProgress, Table, TableBody, TableCell,
+  Alert, Box, Button, CircularProgress, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import LeavePoliciesPanel from './LeavePoliciesPanel';
 
 const LeaveTypeListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { leaveTypes, loading } = useSelector((s: RootState) => s.leavePolicy);
+  const { leaveTypes, loading, error } = useSelector((s: RootState) => s.leavePolicy);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedLeaveTypeId, setSelectedLeaveTypeId] = useState<string | null>(null);
 
@@ -38,8 +38,14 @@ const LeaveTypeListPage: React.FC = () => {
 
         {showSpinner && <CircularProgress data-testid="loading-spinner" />}
 
-        {!showSpinner && leaveTypes.length === 0 && (
-          <Typography color="text.secondary">No leave types found.</Typography>
+        {error && (
+          <Alert severity="error" data-testid="leave-types-error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {!showSpinner && !error && leaveTypes.length === 0 && (
+          <Typography color="text.secondary" data-testid="no-leave-types-msg">No leave types found.</Typography>
         )}
 
         {leaveTypes.length > 0 && (

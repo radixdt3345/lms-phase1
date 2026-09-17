@@ -6,8 +6,7 @@ import {
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import type { CreateLeavePolicyDto } from '../../types';
-import { createLeavePolicy } from '../../api/leavePolicyApi';
-import { fetchPoliciesThunk } from '../../store/leavePolicySlice';
+import { createLeavePolicyThunk } from '../../store/leavePolicySlice';
 
 interface Props {
   open: boolean;
@@ -26,7 +25,7 @@ const LeavePolicyFormDialog: React.FC<Props> = ({ open, leaveTypeId, onClose }) 
   const [effectiveFrom, setEffectiveFrom] = useState('');
   const [effectiveTo, setEffectiveTo] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const dto: CreateLeavePolicyDto = {
       leaveTypeId,
       annualAllotment,
@@ -38,8 +37,7 @@ const LeavePolicyFormDialog: React.FC<Props> = ({ open, leaveTypeId, onClose }) 
       effectiveFrom,
       effectiveTo: effectiveTo || undefined,
     };
-    await createLeavePolicy(dto);
-    dispatch(fetchPoliciesThunk(leaveTypeId));
+    dispatch(createLeavePolicyThunk(dto));
     onClose();
   };
 

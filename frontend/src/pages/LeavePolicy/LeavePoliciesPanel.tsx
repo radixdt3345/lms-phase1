@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Table, TableBody, TableCell, TableContainer,
+  Alert, Box, Button, CircularProgress, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ interface Props {
 
 const LeavePoliciesPanel: React.FC<Props> = ({ leaveTypeId }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { policies } = useSelector((s: RootState) => s.leavePolicy);
+  const { policies, policiesLoading, policiesError } = useSelector((s: RootState) => s.leavePolicy);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -35,12 +35,22 @@ const LeavePoliciesPanel: React.FC<Props> = ({ leaveTypeId }) => {
         </Button>
       </Box>
 
-      {policies.length === 0 && (
-        <Typography color="text.secondary">No policies found for this leave type.</Typography>
+      {policiesLoading && <CircularProgress size={24} data-testid="policies-loading-spinner" />}
+
+      {policiesError && (
+        <Alert severity="error" data-testid="policies-error" sx={{ mb: 2 }}>
+          {policiesError}
+        </Alert>
+      )}
+
+      {!policiesLoading && !policiesError && policies.length === 0 && (
+        <Typography color="text.secondary" data-testid="no-policies-msg">
+          No policies found for this leave type.
+        </Typography>
       )}
 
       {policies.length > 0 && (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} data-testid="policies-table">
           <Table size="small">
             <TableHead>
               <TableRow>
