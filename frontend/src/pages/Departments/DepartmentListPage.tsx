@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Button, CircularProgress, IconButton, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Chip
+  TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Chip, Alert
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,7 +14,7 @@ import DepartmentFormDialog from './DepartmentFormDialog';
 
 const DepartmentListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { departments, loading } = useSelector((state: RootState) => state.departments);
+  const { departments, loading, error } = useSelector((state: RootState) => state.departments);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDept, setSelectedDept] = useState<DepartmentDto | undefined>(undefined);
 
@@ -55,6 +55,12 @@ const DepartmentListPage: React.FC = () => {
             Add Department
           </Button>
         </Box>
+
+        {error && (
+          <Alert severity="error" data-testid="departments-error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         {showSpinner ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
