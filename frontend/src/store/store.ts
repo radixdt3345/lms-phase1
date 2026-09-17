@@ -3,6 +3,7 @@ import authReducer from './authSlice';
 import departmentReducer from './departmentSlice';
 import leavePolicyReducer from './leavePolicySlice';
 import auditLogReducer from './auditLogSlice';
+import employeeReducer from './employeeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     departments: departmentReducer,
     leavePolicy: leavePolicyReducer,
     auditLog: auditLogReducer,
+    employees: employeeReducer,
   },
 });
 

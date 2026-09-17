@@ -87,3 +87,74 @@ export interface AuditLogPagedResult {
   page: number;
   pageSize: number;
 }
+
+// Generic paged result
+export interface PagedResult<T> {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// Employee types
+export type EmploymentType = 'FullTime' | 'PartTime' | 'Contract' | 'Intern';
+export type EmployeeStatus = 'Active' | 'Inactive' | 'OnLeave' | 'Terminated';
+
+export interface EmployeeProfileDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  employeeCode: string;
+  jobTitle: string;
+  departmentId: string;
+  departmentName: string;
+  dateOfJoining: string;
+  employmentType: EmploymentType;
+  status: EmployeeStatus;
+  userId?: string;
+}
+
+export interface CreateEmployeeDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  employeeCode: string;
+  jobTitle: string;
+  departmentId: string;
+  dateOfJoining: string;
+  employmentType: EmploymentType;
+  status?: EmployeeStatus;
+}
+
+export interface UpdateEmployeeDto {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  jobTitle?: string;
+  departmentId?: string;
+  dateOfJoining?: string;
+  employmentType?: EmploymentType;
+  status?: EmployeeStatus;
+}
+
+export interface EmployeeLeaveBalanceDto {
+  id: string;
+  employeeId: string;
+  leaveTypeId: string;
+  leaveTypeName: string;
+  totalAllotted: number;
+  used: number;
+  remaining: number;
+  year: number;
+}
+
+export interface EmployeeDocumentDto {
+  id: string;
+  employeeId: string;
+  documentType: string;
+  fileName: string;
+  uploadedAt: string;
+  url: string;
+}
