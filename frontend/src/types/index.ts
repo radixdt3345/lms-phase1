@@ -56,3 +56,34 @@ export interface CreateLeavePolicyDto {
   maxConsecutiveDays?: number; minNoticeDays?: number;
   accruedMonthly?: boolean; accrualRate?: number; effectiveFrom: string; effectiveTo?: string;
 }
+
+// Audit Log types
+export interface AuditLogDto {
+  id: string;
+  actorUserId: string;
+  actorEmail: string;
+  actionType: string;
+  recordType: string;
+  recordId: string;
+  oldValue: string | null;
+  newValue: string | null;
+  ipAddress: string;
+  timestamp: string;
+}
+
+export interface AuditLogFilters {
+  userId?: string;
+  actionType?: string;
+  recordType?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface AuditLogPagedResult {
+  items: AuditLogDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}

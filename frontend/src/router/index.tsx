@@ -6,6 +6,7 @@ import { CircularProgress, Box } from '@mui/material';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
 const LeaveTypeListPage = lazy(() => import('../pages/LeavePolicy/LeaveTypeListPage'));
+const AuditTrailPage = lazy(() => import('../pages/AuditTrail/AuditTrailPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -41,6 +42,15 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <LeaveTypeListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/audit-trail"
+            element={
+              <ProtectedRoute>
+                <AuditTrailPage />
               </ProtectedRoute>
             }
           />
