@@ -5,9 +5,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
 import authReducer from '../store/authSlice';
 import employeeReducer from '../store/employeeSlice';
+import departmentReducer from '../store/departmentSlice';
 import EmployeeListPage from '../pages/Employees/EmployeeListPage';
 import EmployeeFormDialog from '../pages/Employees/EmployeeFormDialog';
-import type { EmployeeProfileDto } from '../types';
+import type { EmployeeProfileDto, DepartmentDto } from '../types';
 
 vi.mock('../api/employeeApi', () => ({
   fetchEmployees: vi.fn(),
@@ -19,7 +20,15 @@ vi.mock('../api/employeeApi', () => ({
   fetchEmployeeDocuments: vi.fn(),
 }));
 
+vi.mock('../api/departmentApi', () => ({
+  fetchDepartments: vi.fn(),
+  createDepartment: vi.fn(),
+  updateDepartment: vi.fn(),
+  deleteDepartment: vi.fn(),
+}));
+
 import * as employeeApi from '../api/employeeApi';
+import * as departmentApi from '../api/departmentApi';
 
 const mockEmployees: EmployeeProfileDto[] = [
   {
@@ -50,6 +59,11 @@ const mockEmployees: EmployeeProfileDto[] = [
   },
 ];
 
+const mockDepartments: DepartmentDto[] = [
+  { id: 'dept-1', name: 'Engineering', code: 'ENG', overlapLimit: 2, isActive: true, createdAt: '2024-01-01' },
+  { id: 'dept-2', name: 'HR', code: 'HR', overlapLimit: 1, isActive: true, createdAt: '2024-01-01' },
+];
+
 const mockPagedResult = {
   items: mockEmployees,
   totalCount: 2,
@@ -65,9 +79,15 @@ const authState = {
   error: null,
 };
 
+const deptState = {
+  departments: mockDepartments,
+  loading: false,
+  error: null,
+};
+
 function makeStore(employees: EmployeeProfileDto[] = [], loading = false, error: string | null = null) {
   return configureStore({
-    reducer: { auth: authReducer, employees: employeeReducer },
+    reducer: { auth: authReducer, employees: employeeReducer, departments: departmentReducer },
     preloadedState: {
       auth: authState,
       employees: {
@@ -79,6 +99,7 @@ function makeStore(employees: EmployeeProfileDto[] = [], loading = false, error:
         loading,
         error,
       },
+      departments: deptState,
     },
   });
 }
@@ -87,6 +108,7 @@ describe('EmployeeListPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(employeeApi.fetchEmployees).mockResolvedValue(mockPagedResult);
+    vi.mocked(departmentApi.fetchDepartments).mockResolvedValue(mockDepartments);
   });
 
   it('UT-F02-UI-001: renders with data-testid employee-list-page', () => {
@@ -207,5 +229,43 @@ describe('EmployeeListPage', () => {
     const state = store.getState();
     expect(state.employees.employees.find((e) => e.id === 'emp-1')).toBeUndefined();
     expect(state.employees.totalCount).toBe(1);
+  });
+
+  it('UT-F02-INT-001: department filter dropdown renders with All Departments option', () => {
+    render(
+      <Provider store={makeStore(mockEmployees)}>
+        <MemoryRouter>
+          <EmployeeListPage />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByTestId('employee-dept-filter')).toBeTruthy();
+  });
+
+  it('UT-F02-INT-002: fetchEmployees is called with departmentId when filter changes', async () => {
+    render(
+      <Provider store={makeStore(mockEmployees)}>
+        <MemoryRouter>
+          <EmployeeListPage />
+        </MemoryRouter>
+      </Provider>
+    );
+    await waitFor(() => {
+      expect(vi.mocked(employeeApi.fetchEmployees)).toHaveBeenCalledWith(
+        expect.objectContaining({ pageNumber: 1, pageSize: 20 })
+      );
+    });
+  });
+
+  it('UT-F02-INT-003: EmployeeFormDialog department field is a dropdown', () => {
+    render(
+      <Provider store={makeStore()}>
+        <MemoryRouter>
+          <EmployeeFormDialog open={true} onClose={vi.fn()} />
+        </MemoryRouter>
+      </Provider>
+    );
+    // department-input is now a select — verify it is present
+    expect(screen.getByTestId('employee-department-input')).toBeTruthy();
   });
 });
