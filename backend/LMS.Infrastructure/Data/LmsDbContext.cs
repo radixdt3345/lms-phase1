@@ -31,11 +31,15 @@ public class LmsDbContext : DbContext
     public DbSet<EmployeeLeaveBalance> EmployeeLeaveBalances => Set<EmployeeLeaveBalance>();
     public DbSet<EmployeeDocument> EmployeeDocuments => Set<EmployeeDocument>();
 
-    // Audit Trail (F-13) — append-only, never updated or deleted
-    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    // Leave Balance Management (F-05)
+    public DbSet<LeaveBalance> LeaveBalances => Set<LeaveBalance>();
+    public DbSet<CompOffCredit> CompOffCredits => Set<CompOffCredit>();
 
     // Approval Workflow (F-08)
     public DbSet<ApprovalRecord> ApprovalRecords => Set<ApprovalRecord>();
+
+    // Audit Trail (F-13) — append-only, never updated or deleted
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -119,6 +123,18 @@ public class LmsDbContext : DbContext
             {
                 if (entry.State == EntityState.Added)
                     employeeDocument.CreatedAt = nowOffset;
+            }
+            else if (entry.Entity is LeaveBalance leaveBalance)
+            {
+                if (entry.State == EntityState.Added)
+                    leaveBalance.CreatedAt = nowOffset;
+                leaveBalance.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is CompOffCredit compOffCredit)
+            {
+                if (entry.State == EntityState.Added)
+                    compOffCredit.CreatedAt = nowOffset;
+                compOffCredit.UpdatedAt = nowOffset;
             }
             else if (entry.Entity is ApprovalRecord approvalRecord && entry.State == EntityState.Added)
             {
