@@ -49,12 +49,28 @@ const AppRouter: React.FC = () => {
             <Route path="/employees" element={<EmployeeListPage />} />
             <Route path="/public-holidays" element={<PublicHolidayListPage />} />
             <Route path="/leave-requests" element={<LeaveRequestListPage />} />
-            {/* F-07 Comp-Off Management */}
+            {/* F-07 Comp-Off Management — INT wired here */}
             <Route path="/comp-off" element={<CompOffListPage />} />
-            {/* F-09 Notifications */}
+            {/* F-09 Notifications — INT wired here */}
             <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/admin/jobs" element={<JobAdminPage />} />
             <Route path="/leave-balance" element={<LeaveBalancePage />} />
+            {/* Admin-only routes — HRAdmin / SuperAdmin */}
+            <Route
+              path="/admin/jobs"
+              element={
+                <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                  <JobAdminPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs"
+              element={
+                <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                  <JobAdminPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Catch-all — redirect to login */}
