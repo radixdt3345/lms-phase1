@@ -49,6 +49,9 @@ builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// F-15: Background Jobs (Hangfire)
+builder.Services.AddScoped<IJobSchedulerService, JobSchedulerService>();
+
 // ── Authentication — Azure AD JWT Bearer ─────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -123,6 +126,15 @@ app.MapControllers();
 if (app.Environment.IsDevelopment())
 {
     app.UseHangfireDashboard("/hangfire");
+}
+
+// ── F-15: Register recurring Hangfire jobs on startup ─────────────────────────
+// JobSchedulerService.RegisterJobs() is idempotent — Hangfire's AddOrUpdate
+// overwrites existing registrations, so this is safe to call on every restart.
+using (var scope = app.Services.CreateScope())
+{
+    var jobScheduler = scope.ServiceProvider.GetRequiredService<IJobSchedulerService>();
+    jobScheduler.RegisterJobs();
 }
 
 app.Run();
