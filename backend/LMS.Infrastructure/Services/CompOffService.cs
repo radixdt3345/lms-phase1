@@ -51,7 +51,7 @@ public class CompOffService : ICompOffService
         // Resolve the employee's reporting manager for L1 approval (FR-61)
         var employeeProfile = await _context.EmployeeProfiles
             .FirstOrDefaultAsync(ep => ep.UserId == employeeId && ep.DeletedAt == null);
-        Guid? approverId = employeeProfile?.ReportingManagerId;
+        Guid? approverId = employeeProfile?.ManagerUserId;
 
         var request = new CompOffRequest
         {
@@ -92,7 +92,7 @@ public class CompOffService : ICompOffService
         {
             // Manager sees their direct reports' requests
             var directReportIds = await _context.EmployeeProfiles
-                .Where(ep => ep.ReportingManagerId == callerId && ep.DeletedAt == null)
+                .Where(ep => ep.ManagerUserId == callerId && ep.DeletedAt == null)
                 .Select(ep => ep.UserId)
                 .ToListAsync();
             query = query.Where(r => directReportIds.Contains(r.EmployeeId));
