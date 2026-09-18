@@ -19,7 +19,7 @@ public class LmsDbContext : DbContext
     public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
     public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
 
-    // Notifications
+    // Notifications (F-09)
     public DbSet<Notification> Notifications => Set<Notification>();
 
     // Public Holidays / Master Data
@@ -41,6 +41,9 @@ public class LmsDbContext : DbContext
 
     // Comp-Off Management (F-07)
     public DbSet<CompOffRequest> CompOffRequests => Set<CompOffRequest>();
+
+    // Approval Workflow (F-08)
+    public DbSet<ApprovalRecord> ApprovalRecords => Set<ApprovalRecord>();
 
     // Audit Trail (F-13) — append-only, never updated or deleted
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
@@ -155,6 +158,10 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     compOffRequest.CreatedAt = nowOffset;
                 compOffRequest.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is ApprovalRecord approvalRecord && entry.State == EntityState.Added)
+            {
+                approvalRecord.CreatedAt = now;
             }
         }
 
