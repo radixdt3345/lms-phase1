@@ -5,6 +5,8 @@ import leavePolicyReducer from './leavePolicySlice';
 import auditLogReducer from './auditLogSlice';
 import employeeReducer from './employeeSlice';
 import publicHolidayReducer from './publicHolidaySlice';
+import leaveRequestReducer from './leaveRequestSlice';
+import compOffReducer from './compOffSlice';
 import notificationReducer from './notificationSlice';
 
 export const store = configureStore({
@@ -15,6 +17,8 @@ export const store = configureStore({
     auditLog: auditLogReducer,
     employees: employeeReducer,
     publicHolidays: publicHolidayReducer,
+    leaveRequests: leaveRequestReducer,
+    compOff: compOffReducer,
     notifications: notificationReducer,
   },
 });
