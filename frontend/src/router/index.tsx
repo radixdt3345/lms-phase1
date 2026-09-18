@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/Login/LoginPage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import MainLayout from '../components/MainLayout/MainLayout';
 import { CircularProgress, Box } from '@mui/material';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
@@ -17,7 +18,7 @@ const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
 const ApprovalDashboardPage = lazy(() => import('../pages/Approvals/ApprovalDashboardPage'));
 
 const DashboardPlaceholder: React.FC = () => (
-  <div>Dashboard - Coming Soon</div>
+  <div style={{ padding: 24 }}>Dashboard - Coming Soon</div>
 );
 
 const AppRouter: React.FC = () => {
@@ -28,116 +29,54 @@ const AppRouter: React.FC = () => {
           {/* Public route */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected routes — require Azure AD authentication */}
+          {/* Protected routes wrapped in MainLayout (sidebar + AppBar with NotificationBell) */}
           <Route
-            path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPlaceholder />
+                <MainLayout />
               </ProtectedRoute>
             }
-          />
-          <Route
-            path="/departments"
-            element={
-              <ProtectedRoute>
-                <DepartmentListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/leave-types"
-            element={
-              <ProtectedRoute>
-                <LeaveTypeListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/audit-trail"
-            element={
-              <ProtectedRoute>
-                <AuditTrailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/employees"
-            element={
-              <ProtectedRoute>
-                <EmployeeListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/public-holidays"
-            element={
-              <ProtectedRoute>
-                <PublicHolidayListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/leave-requests"
-            element={
-              <ProtectedRoute>
-                <LeaveRequestListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/comp-off"
-            element={
-              <ProtectedRoute>
-                <CompOffListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* Admin-only routes — HRAdmin / SuperAdmin */}
-          <Route
-            path="/admin/jobs"
-            element={
-              <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
-                <JobAdminPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* /jobs alias — canonical path used by sidebar navigation */}
-          <Route
-            path="/jobs"
-            element={
-              <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
-                <JobAdminPage />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Manager/Admin approval workflow route — F-08 */}
-          <Route
-            path="/approvals"
-            element={
-              <ProtectedRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
-                <ApprovalDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/leave-balance"
-            element={
-              <ProtectedRoute>
-                <LeaveBalancePage />
-              </ProtectedRoute>
-            }
-          />
+          >
+            <Route path="/dashboard" element={<DashboardPlaceholder />} />
+            <Route path="/departments" element={<DepartmentListPage />} />
+            <Route path="/leave-types" element={<LeaveTypeListPage />} />
+            <Route path="/audit-trail" element={<AuditTrailPage />} />
+            <Route path="/employees" element={<EmployeeListPage />} />
+            <Route path="/public-holidays" element={<PublicHolidayListPage />} />
+            <Route path="/leave-requests" element={<LeaveRequestListPage />} />
+            {/* F-07 Comp-Off Management — sidebar nav + route wired (INT layer) */}
+            <Route path="/comp-off" element={<CompOffListPage />} />
+            {/* F-09 Notifications — sidebar nav + route wired (INT layer) */}
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/leave-balance" element={<LeaveBalancePage />} />
+            {/* Admin-only routes — HRAdmin / SuperAdmin */}
+            <Route
+              path="/admin/jobs"
+              element={
+                <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                  <JobAdminPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* /jobs alias — canonical path used by sidebar navigation */}
+            <Route
+              path="/jobs"
+              element={
+                <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                  <JobAdminPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* Manager/Admin approval workflow route — F-08 */}
+            <Route
+              path="/approvals"
+              element={
+                <ProtectedRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
+                  <ApprovalDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
           {/* Catch-all — redirect to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
