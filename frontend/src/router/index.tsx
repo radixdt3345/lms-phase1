@@ -104,7 +104,16 @@ const AppRouter: React.FC = () => {
           <Route
             path="/admin/jobs"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                <JobAdminPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* /jobs alias — canonical path used by sidebar navigation */}
+          <Route
+            path="/jobs"
+            element={
+              <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
                 <JobAdminPage />
               </ProtectedRoute>
             }
