@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.PostgreSql;
 using LMS.Application.Interfaces;
 using LMS.Infrastructure.Seed;
 using LMS.Infrastructure.Data;
@@ -15,6 +17,20 @@ var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
 
 builder.Services.AddDbContext<LmsDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// ── Hangfire — Background Jobs (F-15) ─────────────────────────────────────────
+// Hangfire creates its own schema tables (hangfire.job, hangfire.state, etc.)
+// automatically when the PostgreSQL storage provider initialises on first startup.
+// No EF migration is required for those tables.
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(opts =>
+        opts.UseNpgsqlConnection(connectionString)));
+
+// Register Hangfire server with default worker count (Environment.ProcessorCount * 5)
+builder.Services.AddHangfireServer();
 
 // ── Application services ──────────────────────────────────────────────────────
 builder.Services.AddScoped<IUserService, UserService>();
@@ -95,6 +111,13 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// ── Hangfire Dashboard (development only — no auth in dev) ────────────────────
+// NOTE: For production, add IAuthorizationFilter to restrict dashboard access.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHangfireDashboard("/hangfire");
+}
 
 app.Run();
 
