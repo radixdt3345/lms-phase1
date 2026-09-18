@@ -24,6 +24,7 @@ builder.Services.AddScoped<IPublicHolidayService, PublicHolidayService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<ISeedService, SeedService>();          // F-14: Initial Data Seeding API
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 
 // ── Authentication — Azure AD JWT Bearer ─────────────────────────────────────
