@@ -14,6 +14,7 @@ const CompOffListPage = lazy(() => import('../pages/CompOff/CompOffListPage'));
 const LeaveBalancePage = lazy(() => import('../pages/LeaveBalance/LeaveBalancePage'));
 const NotificationsPage = lazy(() => import('../pages/Notifications/NotificationsPage'));
 const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
+const ApprovalDashboardPage = lazy(() => import('../pages/Approvals/ApprovalDashboardPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -115,6 +116,16 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
                 <JobAdminPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Manager/Admin approval workflow route — F-08 */}
+          <Route
+            path="/approvals"
+            element={
+              <ProtectedRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
+                <ApprovalDashboardPage />
               </ProtectedRoute>
             }
           />
