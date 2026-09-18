@@ -31,7 +31,7 @@ public class CompOffService : ICompOffService
         if (!isWeekend)
         {
             isPublicHoliday = await _context.PublicHolidays
-                .AnyAsync(h => h.Date == dto.DateWorked && h.DeletedAt == null);
+                .AnyAsync(h => h.Date == dto.DateWorked && h.IsActive);
         }
 
         if (!isWeekend && !isPublicHoliday)
