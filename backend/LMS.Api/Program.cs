@@ -41,6 +41,7 @@ builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ISeedService, SeedService>();          // F-14: Initial Data Seeding API
+builder.Services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();  // F-05: Leave Balance Management
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 
 // F-09: Notifications & Email
