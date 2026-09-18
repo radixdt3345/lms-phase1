@@ -45,6 +45,9 @@ public class LmsDbContext : DbContext
     // Approval Workflow (F-08)
     public DbSet<ApprovalRecord> ApprovalRecords => Set<ApprovalRecord>();
 
+    // Background Jobs — application-level tracking (F-15)
+    public DbSet<JobLog> JobLogs => Set<JobLog>();
+
     // Audit Trail (F-13) — append-only, never updated or deleted
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
@@ -162,6 +165,11 @@ public class LmsDbContext : DbContext
             else if (entry.Entity is ApprovalRecord approvalRecord && entry.State == EntityState.Added)
             {
                 approvalRecord.CreatedAt = now;
+            }
+            else if (entry.Entity is JobLog jobLog && entry.State == EntityState.Added)
+            {
+                jobLog.CreatedAt = now;
+                jobLog.ExecutedAt = now;
             }
         }
 
