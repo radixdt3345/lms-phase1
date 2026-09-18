@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ICompOffService, CompOffService>();    // F-07: Comp-Off Management
 builder.Services.AddScoped<ISeedService, SeedService>();          // F-14: Initial Data Seeding API
 builder.Services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();  // F-05: Leave Balance Management
+builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();  // F-06: Leave Application & Workflow
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 
 // F-09: Notifications & Email
