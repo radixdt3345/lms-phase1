@@ -40,6 +40,7 @@ builder.Services.AddScoped<IPublicHolidayService, PublicHolidayService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<ICompOffService, CompOffService>();    // F-07: Comp-Off Management
 builder.Services.AddScoped<ISeedService, SeedService>();          // F-14: Initial Data Seeding API
 builder.Services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();  // F-05: Leave Balance Management
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
