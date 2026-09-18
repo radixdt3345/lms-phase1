@@ -2,7 +2,10 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/Login/LoginPage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import AppLayout from '../components/AppLayout/AppLayout';
 import { CircularProgress, Box } from '@mui/material';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
 const LeaveTypeListPage = lazy(() => import('../pages/LeavePolicy/LeaveTypeListPage'));
@@ -19,10 +22,31 @@ const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
 );
 
+const LoadingFallback = (
+  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+    <CircularProgress />
+  </Box>
+);
+
+/** Wraps a page with auth guard + sidebar layout. */
+const LayoutRoute: React.FC<{ children: React.ReactNode; requiredRoles?: string[] }> = ({
+  children,
+  requiredRoles,
+}) => {
+  const userRoles: string[] = useSelector(
+    (state: RootState) => (state.auth as any)?.user?.roles ?? []
+  );
+  return (
+    <ProtectedRoute requiredRoles={requiredRoles}>
+      <AppLayout userRoles={userRoles}>{children}</AppLayout>
+    </ProtectedRoute>
+  );
+};
+
 const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>}>
+      <Suspense fallback={LoadingFallback}>
         <Routes>
           {/* Public route */}
           <Route path="/login" element={<LoginPage />} />
@@ -31,92 +55,98 @@ const AppRouter: React.FC = () => {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <DashboardPlaceholder />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/departments"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <DepartmentListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/leave-types"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <LeaveTypeListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/audit-trail"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <AuditTrailPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/employees"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <EmployeeListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/public-holidays"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <PublicHolidayListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/leave-requests"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <LeaveRequestListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/comp-off"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <CompOffListPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
           <Route
             path="/notifications"
             element={
-              <ProtectedRoute>
+              <LayoutRoute>
                 <NotificationsPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
+
           {/* Admin-only routes — HRAdmin / SuperAdmin */}
           <Route
             path="/admin/jobs"
             element={
-              <ProtectedRoute>
+              <LayoutRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
                 <JobAdminPage />
-              </ProtectedRoute>
+              </LayoutRoute>
             }
           />
 
+          {/* F-05: Leave Balance — both canonical path and legacy singular path */}
+          <Route
+            path="/leave-balances"
+            element={
+              <LayoutRoute>
+                <LeaveBalancePage />
+              </LayoutRoute>
+            }
+          />
           <Route
             path="/leave-balance"
-            element={
-              <ProtectedRoute>
-                <LeaveBalancePage />
-              </ProtectedRoute>
-            }
+            element={<Navigate to="/leave-balances" replace />}
           />
 
           {/* Catch-all — redirect to login */}
