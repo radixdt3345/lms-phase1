@@ -35,6 +35,10 @@ public class LmsDbContext : DbContext
     public DbSet<LeaveBalance> LeaveBalances => Set<LeaveBalance>();
     public DbSet<CompOffCredit> CompOffCredits => Set<CompOffCredit>();
 
+    // Leave Application & Workflow (F-06)
+    public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
+    public DbSet<LeaveRequestAttachment> LeaveRequestAttachments => Set<LeaveRequestAttachment>();
+
     // Audit Trail (F-13) — append-only, never updated or deleted
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
@@ -132,6 +136,16 @@ public class LmsDbContext : DbContext
                 if (entry.State == EntityState.Added)
                     compOffCredit.CreatedAt = nowOffset;
                 compOffCredit.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is LeaveRequest leaveRequest)
+            {
+                if (entry.State == EntityState.Added)
+                    leaveRequest.CreatedAt = nowOffset;
+                leaveRequest.UpdatedAt = nowOffset;
+            }
+            else if (entry.Entity is LeaveRequestAttachment leaveRequestAttachment && entry.State == EntityState.Added)
+            {
+                leaveRequestAttachment.CreatedAt = nowOffset;
             }
         }
 
