@@ -6,6 +6,7 @@ import auditLogReducer from './auditLogSlice';
 import employeeReducer from './employeeSlice';
 import publicHolidayReducer from './publicHolidaySlice';
 import leaveRequestReducer from './leaveRequestSlice';
+import compOffReducer from './compOffSlice';
 import leaveBalanceReducer from './leaveBalanceSlice';
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     employees: employeeReducer,
     publicHolidays: publicHolidayReducer,
     leaveRequests: leaveRequestReducer,
+    compOff: compOffReducer,
     leaveBalance: leaveBalanceReducer,
   },
 });
