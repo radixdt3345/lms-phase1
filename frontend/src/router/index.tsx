@@ -10,6 +10,7 @@ const AuditTrailPage = lazy(() => import('../pages/AuditTrail/AuditTrailPage'));
 const EmployeeListPage = lazy(() => import('../pages/Employees/EmployeeListPage'));
 const PublicHolidayListPage = lazy(() => import('../pages/PublicHolidays/PublicHolidayListPage'));
 const LeaveRequestListPage = lazy(() => import('../pages/LeaveRequests/LeaveRequestListPage'));
+const CompOffListPage = lazy(() => import('../pages/CompOff/CompOffListPage'));
 const LeaveBalancePage = lazy(() => import('../pages/LeaveBalance/LeaveBalancePage'));
 
 const DashboardPlaceholder: React.FC = () => (
@@ -78,6 +79,14 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <LeaveRequestListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/comp-off"
+            element={
+              <ProtectedRoute>
+                <CompOffListPage />
               </ProtectedRoute>
             }
           />
