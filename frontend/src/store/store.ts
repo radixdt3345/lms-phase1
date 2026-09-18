@@ -10,6 +10,7 @@ import compOffReducer from './compOffSlice';
 import leaveBalanceReducer from './leaveBalanceSlice';
 import notificationReducer from './notificationSlice';
 import jobReducer from './jobSlice';
+import approvalReducer from './approvalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     leaveBalance: leaveBalanceReducer,
     notifications: notificationReducer,
     jobs: jobReducer,
+    approvals: approvalReducer,
   },
 });
 
