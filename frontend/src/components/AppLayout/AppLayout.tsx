@@ -26,6 +26,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import HistoryIcon from '@mui/icons-material/History';
 import WorkIcon from '@mui/icons-material/Work';
+import ApprovalIcon from '@mui/icons-material/HowToReg';
 
 const DRAWER_WIDTH = 240;
 
@@ -42,6 +43,10 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Leave Balances', path: '/leave-balances', icon: <BalanceIcon /> },
   { label: 'Comp Off', path: '/comp-off', icon: <BeachAccessIcon /> },
   { label: 'Notifications', path: '/notifications', icon: <NotificationsIcon /> },
+];
+
+const APPROVER_NAV_ITEMS: NavItem[] = [
+  { label: 'Approvals', path: '/approvals', icon: <ApprovalIcon />, roles: ['Manager', 'HRAdmin', 'SuperAdmin'] },
 ];
 
 const ADMIN_NAV_ITEMS: NavItem[] = [
@@ -63,6 +68,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const isApprover = userRoles.some((r) => ['Manager', 'HRAdmin', 'SuperAdmin'].includes(r));
   const isHRAdmin = userRoles.some((r) => ['HRAdmin', 'SuperAdmin'].includes(r));
 
   const drawerContent = (
@@ -91,6 +97,35 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
           </Tooltip>
         ))}
       </List>
+      {isApprover && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <Typography
+            variant="caption"
+            sx={{ px: 2, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5 }}
+          >
+            Approvals
+          </Typography>
+          <List>
+            {APPROVER_NAV_ITEMS.map((item) => (
+              <Tooltip key={item.path} title={item.label} placement="right" disableHoverListener>
+                <ListItemButton
+                  data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                  selected={location.pathname === item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setMobileOpen(false);
+                  }}
+                  sx={{ borderRadius: 1, mx: 0.5, mb: 0.25 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14 }} />
+                </ListItemButton>
+              </Tooltip>
+            ))}
+          </List>
+        </>
+      )}
       {isHRAdmin && (
         <>
           <Divider sx={{ my: 1 }} />
