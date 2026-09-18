@@ -19,9 +19,26 @@ vi.mock('../api/publicHolidayApi', () => ({
 
 import * as publicHolidayApi from '../api/publicHolidayApi';
 
+// Mock data aligned with backend PublicHolidayDto field names
 const mockHolidays: PublicHolidayDto[] = [
-  { id: '1', name: 'New Year', date: '2026-01-01', country: 'IN', isRecurring: true },
-  { id: '2', name: 'Republic Day', date: '2026-01-26', country: 'IN', isRecurring: true },
+  {
+    id: '1',
+    name: 'New Year',
+    date: '2026-01-01',
+    year: 2026,
+    countryCode: 'IN',
+    isOptional: false,
+    isActive: true,
+  },
+  {
+    id: '2',
+    name: 'Republic Day',
+    date: '2026-01-26',
+    year: 2026,
+    countryCode: 'IN',
+    isOptional: false,
+    isActive: true,
+  },
 ];
 
 const authState = {

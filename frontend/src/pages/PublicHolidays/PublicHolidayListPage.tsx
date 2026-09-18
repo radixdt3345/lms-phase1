@@ -100,9 +100,9 @@ const PublicHolidayListPage: React.FC = () => {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell>Date</TableCell>
-                  <TableCell>Country</TableCell>
-                  <TableCell>Region</TableCell>
-                  <TableCell>Recurring</TableCell>
+                  <TableCell>Country Code</TableCell>
+                  <TableCell>Optional</TableCell>
+                  <TableCell>Active</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -118,12 +118,18 @@ const PublicHolidayListPage: React.FC = () => {
                     <TableRow key={holiday.id} data-testid={`holiday-row-${holiday.id}`}>
                       <TableCell>{holiday.name}</TableCell>
                       <TableCell>{holiday.date}</TableCell>
-                      <TableCell>{holiday.country}</TableCell>
-                      <TableCell>{holiday.region ?? '-'}</TableCell>
+                      <TableCell>{holiday.countryCode}</TableCell>
                       <TableCell>
                         <Chip
-                          label={holiday.isRecurring ? 'Yes' : 'No'}
-                          color={holiday.isRecurring ? 'success' : 'default'}
+                          label={holiday.isOptional ? 'Optional' : 'Mandatory'}
+                          color={holiday.isOptional ? 'warning' : 'success'}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={holiday.isActive ? 'Active' : 'Inactive'}
+                          color={holiday.isActive ? 'success' : 'default'}
                           size="small"
                         />
                       </TableCell>
