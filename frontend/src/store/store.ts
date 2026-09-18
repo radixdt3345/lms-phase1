@@ -8,6 +8,7 @@ import publicHolidayReducer from './publicHolidaySlice';
 import leaveRequestReducer from './leaveRequestSlice';
 import compOffReducer from './compOffSlice';
 import notificationReducer from './notificationSlice';
+import jobReducer from './jobSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     leaveRequests: leaveRequestReducer,
     compOff: compOffReducer,
     notifications: notificationReducer,
+    jobs: jobReducer,
   },
 });
 
