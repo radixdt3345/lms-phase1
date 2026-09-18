@@ -11,6 +11,7 @@ const EmployeeListPage = lazy(() => import('../pages/Employees/EmployeeListPage'
 const PublicHolidayListPage = lazy(() => import('../pages/PublicHolidays/PublicHolidayListPage'));
 const LeaveRequestListPage = lazy(() => import('../pages/LeaveRequests/LeaveRequestListPage'));
 const CompOffListPage = lazy(() => import('../pages/CompOff/CompOffListPage'));
+const NotificationsPage = lazy(() => import('../pages/Notifications/NotificationsPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -86,6 +87,14 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <CompOffListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationsPage />
               </ProtectedRoute>
             }
           />
