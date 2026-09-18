@@ -4,6 +4,7 @@ import departmentReducer from './departmentSlice';
 import leavePolicyReducer from './leavePolicySlice';
 import auditLogReducer from './auditLogSlice';
 import employeeReducer from './employeeSlice';
+import publicHolidayReducer from './publicHolidaySlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     leavePolicy: leavePolicyReducer,
     auditLog: auditLogReducer,
     employees: employeeReducer,
+    publicHolidays: publicHolidayReducer,
   },
 });
 
