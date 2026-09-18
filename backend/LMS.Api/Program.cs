@@ -43,6 +43,10 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ISeedService, SeedService>();          // F-14: Initial Data Seeding API
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 
+// F-09: Notifications & Email
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 // ── Authentication — Azure AD JWT Bearer ─────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
