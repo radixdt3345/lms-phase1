@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from '../pages/Login/LoginPage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import MainLayout from '../components/MainLayout/MainLayout';
 import { CircularProgress, Box } from '@mui/material';
 
 const DepartmentListPage = lazy(() => import('../pages/Departments/DepartmentListPage'));
@@ -16,108 +17,45 @@ const NotificationsPage = lazy(() => import('../pages/Notifications/Notification
 const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
 
 const DashboardPlaceholder: React.FC = () => (
-  <div>Dashboard - Coming Soon</div>
+  <div style={{ padding: 24 }}>Dashboard - Coming Soon</div>
+);
+
+const Fallback: React.FC = () => (
+  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+    <CircularProgress />
+  </Box>
 );
 
 const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>}>
+      <Suspense fallback={<Fallback />}>
         <Routes>
           {/* Public route */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected routes — require Azure AD authentication */}
+          {/* Protected routes wrapped in MainLayout (sidebar + AppBar) */}
           <Route
-            path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPlaceholder />
+                <MainLayout />
               </ProtectedRoute>
             }
-          />
-          <Route
-            path="/departments"
-            element={
-              <ProtectedRoute>
-                <DepartmentListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/leave-types"
-            element={
-              <ProtectedRoute>
-                <LeaveTypeListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/audit-trail"
-            element={
-              <ProtectedRoute>
-                <AuditTrailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/employees"
-            element={
-              <ProtectedRoute>
-                <EmployeeListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/public-holidays"
-            element={
-              <ProtectedRoute>
-                <PublicHolidayListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/leave-requests"
-            element={
-              <ProtectedRoute>
-                <LeaveRequestListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/comp-off"
-            element={
-              <ProtectedRoute>
-                <CompOffListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* Admin-only routes — HRAdmin / SuperAdmin */}
-          <Route
-            path="/admin/jobs"
-            element={
-              <ProtectedRoute>
-                <JobAdminPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/leave-balance"
-            element={
-              <ProtectedRoute>
-                <LeaveBalancePage />
-              </ProtectedRoute>
-            }
-          />
+          >
+            <Route path="/dashboard" element={<DashboardPlaceholder />} />
+            <Route path="/departments" element={<DepartmentListPage />} />
+            <Route path="/leave-types" element={<LeaveTypeListPage />} />
+            <Route path="/audit-trail" element={<AuditTrailPage />} />
+            <Route path="/employees" element={<EmployeeListPage />} />
+            <Route path="/public-holidays" element={<PublicHolidayListPage />} />
+            <Route path="/leave-requests" element={<LeaveRequestListPage />} />
+            {/* F-07 Comp-Off Management */}
+            <Route path="/comp-off" element={<CompOffListPage />} />
+            {/* F-09 Notifications */}
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/admin/jobs" element={<JobAdminPage />} />
+            <Route path="/leave-balance" element={<LeaveBalancePage />} />
+          </Route>
 
           {/* Catch-all — redirect to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
