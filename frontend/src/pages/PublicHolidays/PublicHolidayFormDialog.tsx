@@ -19,37 +19,33 @@ const PublicHolidayFormDialog: React.FC<Props> = ({ open, onClose, holiday, year
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
-  const [country, setCountry] = useState('');
-  const [region, setRegion] = useState('');
-  const [isRecurring, setIsRecurring] = useState(false);
+  const [countryCode, setCountryCode] = useState('IN');
+  const [isOptional, setIsOptional] = useState(false);
   const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (holiday) {
       setName(holiday.name);
       setDate(holiday.date);
-      setCountry(holiday.country);
-      setRegion(holiday.region ?? '');
-      setIsRecurring(holiday.isRecurring);
+      setCountryCode(holiday.countryCode ?? 'IN');
+      setIsOptional(holiday.isOptional);
       setDescription(holiday.description ?? '');
     } else {
       setName('');
       setDate(`${year}-01-01`);
-      setCountry('');
-      setRegion('');
-      setIsRecurring(false);
+      setCountryCode('IN');
+      setIsOptional(false);
       setDescription('');
     }
   }, [holiday, open, year]);
 
   const handleSubmit = () => {
-    if (!name || !date || !country) return;
+    if (!name || !date) return;
     const dto = {
       name,
       date,
-      country,
-      region: region || undefined,
-      isRecurring,
+      countryCode,
+      isOptional,
       description: description || undefined,
     };
     if (holiday) {
@@ -86,19 +82,11 @@ const PublicHolidayFormDialog: React.FC<Props> = ({ open, onClose, holiday, year
             }}
           />
           <TextField
-            label="Country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            required
+            label="Country Code (e.g. IN)"
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value)}
             fullWidth
-            slotProps={{ htmlInput: { 'data-testid': 'holiday-country-input' } }}
-          />
-          <TextField
-            label="Region (optional)"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            fullWidth
-            slotProps={{ htmlInput: { 'data-testid': 'holiday-region-input' } }}
+            inputProps={{ maxLength: 2, 'data-testid': 'holiday-country-input' }}
           />
           <TextField
             label="Description (optional)"
@@ -113,11 +101,11 @@ const PublicHolidayFormDialog: React.FC<Props> = ({ open, onClose, holiday, year
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={isRecurring}
-                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  checked={isOptional}
+                  onChange={(e) => setIsOptional(e.target.checked)}
                 />
               }
-              label="Recurring annually"
+              label="Optional (restricted) holiday"
             />
           </Box>
         </Box>
