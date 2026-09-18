@@ -220,7 +220,7 @@ public class CompOffService : ICompOffService
         return new CompOffCreditDto
         {
             EmployeeId = employeeId,
-            EmployeeName = employee is null ? string.Empty : $"{employee.FirstName} {employee.LastName}",
+            EmployeeName = employee is null ? string.Empty : employee.DisplayName,
             ActiveDays = credits.Where(c => c.Status == "Active").Sum(c => c.Days),
             UsedDays = credits.Where(c => c.Status == "Used").Sum(c => c.Days),
             ExpiredDays = credits.Where(c => c.Status == "Expired").Sum(c => c.Days),
@@ -248,7 +248,7 @@ public class CompOffService : ICompOffService
         {
             Id = r.Id,
             EmployeeId = r.EmployeeId,
-            EmployeeName = employee is null ? string.Empty : $"{employee.FirstName} {employee.LastName}",
+            EmployeeName = employee is null ? string.Empty : employee.DisplayName,
             DateWorked = r.DateWorked,
             StartTime = r.StartTime,
             EndTime = r.EndTime,
@@ -257,7 +257,7 @@ public class CompOffService : ICompOffService
             CalculatedCredit = r.CalculatedCredit,
             Status = r.Status,
             ApproverId = r.ApproverId,
-            ApproverName = approver is null ? null : $"{approver.FirstName} {approver.LastName}",
+            ApproverName = approver is null ? null : approver.DisplayName,
             ApprovedAt = r.ApprovedAt,
             RejectionReason = r.RejectionReason,
             CreatedAt = r.CreatedAt
