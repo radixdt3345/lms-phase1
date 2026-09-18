@@ -11,6 +11,7 @@ const EmployeeListPage = lazy(() => import('../pages/Employees/EmployeeListPage'
 const PublicHolidayListPage = lazy(() => import('../pages/PublicHolidays/PublicHolidayListPage'));
 const LeaveRequestListPage = lazy(() => import('../pages/LeaveRequests/LeaveRequestListPage'));
 const CompOffListPage = lazy(() => import('../pages/CompOff/CompOffListPage'));
+const LeaveBalancePage = lazy(() => import('../pages/LeaveBalance/LeaveBalancePage'));
 const NotificationsPage = lazy(() => import('../pages/Notifications/NotificationsPage'));
 const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
 
@@ -105,6 +106,15 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <JobAdminPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/leave-balance"
+            element={
+              <ProtectedRoute>
+                <LeaveBalancePage />
               </ProtectedRoute>
             }
           />
