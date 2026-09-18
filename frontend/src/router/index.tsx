@@ -12,6 +12,7 @@ const PublicHolidayListPage = lazy(() => import('../pages/PublicHolidays/PublicH
 const LeaveRequestListPage = lazy(() => import('../pages/LeaveRequests/LeaveRequestListPage'));
 const CompOffListPage = lazy(() => import('../pages/CompOff/CompOffListPage'));
 const NotificationsPage = lazy(() => import('../pages/Notifications/NotificationsPage'));
+const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
 
 const DashboardPlaceholder: React.FC = () => (
   <div>Dashboard - Coming Soon</div>
@@ -95,6 +96,15 @@ const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <NotificationsPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Admin-only routes — HRAdmin / SuperAdmin */}
+          <Route
+            path="/admin/jobs"
+            element={
+              <ProtectedRoute>
+                <JobAdminPage />
               </ProtectedRoute>
             }
           />
