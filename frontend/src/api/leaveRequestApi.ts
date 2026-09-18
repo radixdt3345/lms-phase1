@@ -36,6 +36,12 @@ export const fetchLeaveRequests = async (): Promise<LeaveRequestDto[]> => {
   return res.data.data;
 };
 
+/** Returns leave requests pending approval — Manager/HRAdmin only (GET /api/leave-requests/pending). */
+export const fetchPendingLeaveRequests = async (): Promise<LeaveRequestDto[]> => {
+  const res = await api.get<ApiResponse<LeaveRequestDto[]>>('/leave-requests/pending');
+  return res.data.data;
+};
+
 export const createLeaveRequest = async (dto: CreateLeaveRequestDto): Promise<LeaveRequestDto> => {
   const res = await api.post<ApiResponse<LeaveRequestDto>>('/leave-requests', dto);
   return res.data.data;
