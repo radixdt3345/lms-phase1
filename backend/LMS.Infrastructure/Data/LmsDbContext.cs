@@ -39,6 +39,9 @@ public class LmsDbContext : DbContext
     public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
     public DbSet<LeaveRequestAttachment> LeaveRequestAttachments => Set<LeaveRequestAttachment>();
 
+    // Comp-Off Management (F-07)
+    public DbSet<CompOffRequest> CompOffRequests => Set<CompOffRequest>();
+
     // Audit Trail (F-13) — append-only, never updated or deleted
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
@@ -146,6 +149,12 @@ public class LmsDbContext : DbContext
             else if (entry.Entity is LeaveRequestAttachment leaveRequestAttachment && entry.State == EntityState.Added)
             {
                 leaveRequestAttachment.CreatedAt = nowOffset;
+            }
+            else if (entry.Entity is CompOffRequest compOffRequest)
+            {
+                if (entry.State == EntityState.Added)
+                    compOffRequest.CreatedAt = nowOffset;
+                compOffRequest.UpdatedAt = nowOffset;
             }
         }
 
