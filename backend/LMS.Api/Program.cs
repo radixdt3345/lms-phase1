@@ -54,6 +54,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 // F-15: Background Jobs (Hangfire)
 builder.Services.AddScoped<IJobSchedulerService, JobSchedulerService>();
+builder.Services.AddScoped<IReportService, ReportService>();      // F-12: Reports & CSV Export
 
 // ── Authentication — Azure AD JWT Bearer ─────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
