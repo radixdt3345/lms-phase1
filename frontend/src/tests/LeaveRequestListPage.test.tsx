@@ -2,14 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import leaveRequestReducer from '../../store/leaveRequestSlice';
-import leavePolicyReducer from '../../store/leavePolicySlice';
-import LeaveRequestListPage from '../../pages/LeaveRequests/LeaveRequestListPage';
-import * as leaveRequestApi from '../../api/leaveRequestApi';
+import leaveRequestReducer from '../store/leaveRequestSlice';
+import leavePolicyReducer from '../store/leavePolicySlice';
+import LeaveRequestListPage from '../pages/LeaveRequests/LeaveRequestListPage';
+import * as leaveRequestApi from '../api/leaveRequestApi';
 
-jest.mock('../../api/leaveRequestApi');
-jest.mock('../../api/leavePolicyApi', () => ({
-  fetchLeaveTypes: jest.fn().mockResolvedValue([]),
+vi.mock('../api/leaveRequestApi');
+vi.mock('../api/leavePolicyApi', () => ({
+  fetchLeaveTypes: vi.fn().mockResolvedValue([]),
 }));
 
 const mockRequests = [
@@ -61,18 +61,18 @@ const renderPage = (store = buildStore()) =>
 
 describe('LeaveRequestListPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockResolvedValue([]);
-    (leaveRequestApi.approveLeaveRequest as jest.Mock).mockResolvedValue({
+    vi.clearAllMocks();
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockResolvedValue([]);
+    (leaveRequestApi.approveLeaveRequest as vi.Mock).mockResolvedValue({
       ...mockRequests[0],
       status: 'Approved',
     });
-    (leaveRequestApi.rejectLeaveRequest as jest.Mock).mockResolvedValue({
+    (leaveRequestApi.rejectLeaveRequest as vi.Mock).mockResolvedValue({
       ...mockRequests[0],
       status: 'Rejected',
       rejectionReason: 'No reason',
     });
-    (leaveRequestApi.cancelLeaveRequest as jest.Mock).mockResolvedValue({
+    (leaveRequestApi.cancelLeaveRequest as vi.Mock).mockResolvedValue({
       ...mockRequests[0],
       status: 'Cancelled',
     });
@@ -86,13 +86,13 @@ describe('LeaveRequestListPage', () => {
   });
 
   it('shows loading spinner on initial fetch', () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockReturnValue(new Promise(() => {}));
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockReturnValue(new Promise(() => {}));
     renderPage();
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
   it('shows empty state when no requests', async () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockResolvedValue([]);
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockResolvedValue([]);
     renderPage();
     await waitFor(() => {
       expect(screen.getByTestId('empty-leave-requests')).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('LeaveRequestListPage', () => {
   });
 
   it('renders leave requests after fetch', async () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockResolvedValue(mockRequests);
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockResolvedValue(mockRequests);
     renderPage();
     await waitFor(() => {
       expect(screen.getByTestId('leave-request-row-req-1')).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('LeaveRequestListPage', () => {
   });
 
   it('filters to Pending tab', async () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockResolvedValue(mockRequests);
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockResolvedValue(mockRequests);
     renderPage();
     await waitFor(() => screen.getByTestId('leave-request-row-req-1'));
 
@@ -121,7 +121,7 @@ describe('LeaveRequestListPage', () => {
   });
 
   it('shows approve and reject buttons for pending requests', async () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockResolvedValue(mockRequests);
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockResolvedValue(mockRequests);
     renderPage();
     await waitFor(() => screen.getByTestId('approve-btn-req-1'));
 
@@ -132,7 +132,7 @@ describe('LeaveRequestListPage', () => {
   });
 
   it('shows error alert when fetch fails', async () => {
-    (leaveRequestApi.fetchLeaveRequests as jest.Mock).mockRejectedValue(new Error('Network error'));
+    (leaveRequestApi.fetchLeaveRequests as vi.Mock).mockRejectedValue(new Error('Network error'));
     renderPage();
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();

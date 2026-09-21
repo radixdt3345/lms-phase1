@@ -147,7 +147,7 @@ const LeaveBalancePage: React.FC = () => {
                       <Typography
                         component="span"
                         color={balance.availableDays <= 0 ? 'error' : 'success.main'}
-                        fontWeight={600}
+                        sx={{ fontWeight: 600 }}
                       >
                         {balance.availableDays}
                       </Typography>
@@ -198,7 +198,7 @@ const LeaveBalancePage: React.FC = () => {
                   helperText="Use positive to add, negative to deduct"
                   fullWidth
                   size="small"
-                  inputProps={{ 'data-testid': 'adjustment-input' }}
+                  slotProps={{ htmlInput: { 'data-testid': 'adjustment-input' } }}
                 />
                 <TextField
                   label="Reason"
@@ -208,7 +208,7 @@ const LeaveBalancePage: React.FC = () => {
                   multiline
                   rows={3}
                   size="small"
-                  inputProps={{ 'data-testid': 'reason-input' }}
+                  slotProps={{ htmlInput: { 'data-testid': 'reason-input' } }}
                 />
                 {error && (
                   <Alert severity="error" sx={{ mt: 1 }}>

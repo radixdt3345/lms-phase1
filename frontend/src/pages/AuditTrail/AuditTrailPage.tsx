@@ -87,13 +87,13 @@ const AuditRow: React.FC<AuditRowProps> = ({ log }) => {
             <Collapse in={expanded} timeout="auto" unmountOnExit>
               <Box sx={{ display: 'flex', gap: 2, p: 1, bgcolor: 'grey.50', borderRadius: 1, my: 1 }}>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="caption" fontWeight="bold" color="error.main">Before</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold' }} color="error.main">Before</Typography>
                   <pre style={{ fontSize: '0.72rem', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
                     {JSON.stringify(parsedOld, null, 2)}
                   </pre>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="caption" fontWeight="bold" color="success.main">After</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold' }} color="success.main">After</Typography>
                   <pre style={{ fontSize: '0.72rem', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
                     {JSON.stringify(parsedNew, null, 2)}
                   </pre>

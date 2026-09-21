@@ -8,7 +8,7 @@ import authReducer from '../store/authSlice';
 import * as dashboardApi from '../api/dashboardApi';
 import DashboardPage from '../pages/Dashboard/DashboardPage';
 
-jest.mock('../api/dashboardApi');
+vi.mock('../api/dashboardApi');
 
 const mockOverview = {
   totalEmployees: 50,
@@ -62,11 +62,11 @@ const renderDashboard = (roles: string[] = ['HRAdmin']) => {
 
 describe('Dashboard Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (dashboardApi.fetchDashboardOverview as jest.Mock).mockResolvedValue(mockOverview);
-    (dashboardApi.fetchTeamLeave as jest.Mock).mockResolvedValue(mockTeamLeave);
-    (dashboardApi.fetchApprovalSummary as jest.Mock).mockResolvedValue(mockApprovalSummary);
-    (dashboardApi.fetchCompOffSummary as jest.Mock).mockResolvedValue(mockCompOff);
+    vi.clearAllMocks();
+    (dashboardApi.fetchDashboardOverview as vi.Mock).mockResolvedValue(mockOverview);
+    (dashboardApi.fetchTeamLeave as vi.Mock).mockResolvedValue(mockTeamLeave);
+    (dashboardApi.fetchApprovalSummary as vi.Mock).mockResolvedValue(mockApprovalSummary);
+    (dashboardApi.fetchCompOffSummary as vi.Mock).mockResolvedValue(mockCompOff);
   });
 
   it('INT-DASH-01: dashboard route renders DashboardPage without crashing', async () => {

@@ -65,7 +65,7 @@ const LeaveRequestFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={leaveTypeId}
           onChange={(e) => setLeaveTypeId(e.target.value)}
           margin="normal"
-          inputProps={{ 'data-testid': 'leave-type-select' }}
+          slotProps={{ htmlInput: { 'data-testid': 'leave-type-select' } }}
         >
           {leaveTypes.map((lt) => (
             <MenuItem key={lt.id} value={lt.id}>
@@ -80,8 +80,7 @@ const LeaveRequestFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           margin="normal"
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ 'data-testid': 'start-date-input' }}
+          slotProps={{ inputLabel: { shrink: true }, htmlInput: { 'data-testid': 'start-date-input' } }}
         />
         <TextField
           fullWidth
@@ -90,8 +89,7 @@ const LeaveRequestFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           margin="normal"
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ 'data-testid': 'end-date-input' }}
+          slotProps={{ inputLabel: { shrink: true }, htmlInput: { 'data-testid': 'end-date-input' } }}
         />
         <TextField
           fullWidth
@@ -101,7 +99,7 @@ const LeaveRequestFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           margin="normal"
-          inputProps={{ 'data-testid': 'reason-input' }}
+          slotProps={{ htmlInput: { 'data-testid': 'reason-input' } }}
         />
       </DialogContent>
       <DialogActions>

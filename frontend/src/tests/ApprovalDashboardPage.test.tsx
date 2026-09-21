@@ -7,8 +7,8 @@ import ApprovalDashboardPage from '../pages/Approvals/ApprovalDashboardPage';
 import approvalReducer from '../store/approvalSlice';
 
 // Mock approvalApi
-jest.mock('../api/approvalApi', () => ({
-  fetchPendingApprovals: jest.fn().mockResolvedValue([
+vi.mock('../api/approvalApi', () => ({
+  fetchPendingApprovals: vi.fn().mockResolvedValue([
     {
       id: 'pending-1',
       requestType: 'Leave',
@@ -29,7 +29,7 @@ jest.mock('../api/approvalApi', () => ({
       submittedAt: '2026-09-16T10:00:00Z',
     },
   ]),
-  fetchApprovalHistory: jest.fn().mockResolvedValue([
+  fetchApprovalHistory: vi.fn().mockResolvedValue([
     {
       id: 'history-1',
       approverId: 'manager-001',
@@ -39,12 +39,12 @@ jest.mock('../api/approvalApi', () => ({
       comments: 'Approved for personal reasons',
     },
   ]),
-  fetchApprovalStats: jest.fn().mockResolvedValue({ pending: 2, approved: 5, rejected: 1 }),
-  escalateApproval: jest.fn().mockResolvedValue(undefined),
+  fetchApprovalStats: vi.fn().mockResolvedValue({ pending: 2, approved: 5, rejected: 1 }),
+  escalateApproval: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock MUI DataGrid to keep tests fast
-jest.mock('@mui/x-data-grid', () => ({
+vi.mock('@mui/x-data-grid', () => ({
   DataGrid: ({ rows, columns }: { rows: Array<{ id: string; [key: string]: unknown }>; columns: Array<{ field: string; renderCell?: (params: { row: { id: string }; value?: unknown }) => React.ReactNode }> }) => (
     <div data-testid="data-grid">
       {rows.map((row) => (
@@ -97,8 +97,8 @@ test('UT-FE-AP-02: renders approval-stats block', async () => {
 
 // UT-FE-AP-03: Empty state — no rows means empty grid
 test('UT-FE-AP-03: renders empty grid when no pending approvals', async () => {
-  const { fetchPendingApprovals } = require('../api/approvalApi');
-  fetchPendingApprovals.mockResolvedValueOnce([]);
+  const approvalApiMod = await import('../api/approvalApi');
+  vi.mocked(approvalApiMod.fetchPendingApprovals).mockResolvedValueOnce([]);
 
   renderPage();
   await waitFor(() => {
@@ -143,8 +143,8 @@ test('UT-FE-AP-06: history tab renders and is clickable', async () => {
 
 // UT-FE-AP-07: Error state shows alert
 test('UT-FE-AP-07: renders error alert when API fails', async () => {
-  const { fetchPendingApprovals } = require('../api/approvalApi');
-  fetchPendingApprovals.mockRejectedValueOnce(new Error('Network failure'));
+  const approvalApiMod = await import('../api/approvalApi');
+  vi.mocked(approvalApiMod.fetchPendingApprovals).mockRejectedValueOnce(new Error('Network failure'));
 
   renderPage();
   await waitFor(() => {

@@ -7,8 +7,8 @@ import NotificationBell from '../components/NotificationBell/NotificationBell';
 import notificationReducer from '../store/notificationSlice';
 
 // Mock the API module
-jest.mock('../api/notificationApi', () => ({
-  fetchNotifications: jest.fn().mockResolvedValue({
+vi.mock('../api/notificationApi', () => ({
+  fetchNotifications: vi.fn().mockResolvedValue({
     items: [
       {
         id: 'n1',
@@ -34,10 +34,10 @@ jest.mock('../api/notificationApi', () => ({
     pageSize: 10,
     totalPages: 1,
   }),
-  getUnreadCount: jest.fn().mockResolvedValue(3),
-  markRead: jest.fn().mockResolvedValue(true),
-  markAllRead: jest.fn().mockResolvedValue(true),
-  deleteNotification: jest.fn().mockResolvedValue(true),
+  getUnreadCount: vi.fn().mockResolvedValue(3),
+  markRead: vi.fn().mockResolvedValue(true),
+  markAllRead: vi.fn().mockResolvedValue(true),
+  deleteNotification: vi.fn().mockResolvedValue(true),
 }));
 
 function makeStore(preloaded?: Partial<ReturnType<typeof notificationReducer>>) {
@@ -115,7 +115,8 @@ test('UT-FE-N-05: mark-all-read button is visible in dropdown', async () => {
 
 // UT-FE-N-06: Clicking "Mark all read" calls markAllRead API
 test('UT-FE-N-06: clicking mark-all-read dispatches markAllNotificationsRead', async () => {
-  const { markAllRead } = require('../api/notificationApi');
+  const notifApi = await import('../api/notificationApi');
+  const { markAllRead } = notifApi;
   renderBell();
   fireEvent.click(screen.getByTestId('notification-bell'));
   await waitFor(() => {

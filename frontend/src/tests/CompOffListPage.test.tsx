@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import compOffReducer from '../../store/compOffSlice';
-import CompOffListPage from '../../pages/CompOff/CompOffListPage';
-import * as compOffApi from '../../api/compOffApi';
+import compOffReducer from '../store/compOffSlice';
+import CompOffListPage from '../pages/CompOff/CompOffListPage';
+import * as compOffApi from '../api/compOffApi';
 
-jest.mock('../../api/compOffApi');
+vi.mock('../api/compOffApi');
 
 const mockRequests = [
   {
@@ -59,14 +59,14 @@ const renderPage = (store = buildStore()) =>
 
 describe('CompOffListPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockResolvedValue([]);
-    (compOffApi.fetchCompOffCredits as jest.Mock).mockResolvedValue(mockCredits);
-    (compOffApi.approveCompOffRequest as jest.Mock).mockResolvedValue({
+    vi.clearAllMocks();
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockResolvedValue([]);
+    (compOffApi.fetchCompOffCredits as vi.Mock).mockResolvedValue(mockCredits);
+    (compOffApi.approveCompOffRequest as vi.Mock).mockResolvedValue({
       ...mockRequests[0],
       status: 'Approved',
     });
-    (compOffApi.rejectCompOffRequest as jest.Mock).mockResolvedValue({
+    (compOffApi.rejectCompOffRequest as vi.Mock).mockResolvedValue({
       ...mockRequests[0],
       status: 'Rejected',
       rejectionReason: 'Not valid',
@@ -81,13 +81,13 @@ describe('CompOffListPage', () => {
   });
 
   it('shows loading spinner on initial fetch', () => {
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockReturnValue(new Promise(() => {}));
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockReturnValue(new Promise(() => {}));
     renderPage();
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
   it('shows empty state when no requests exist', async () => {
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockResolvedValue([]);
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockResolvedValue([]);
     renderPage();
     await waitFor(() => {
       expect(screen.getByTestId('empty-comp-off')).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe('CompOffListPage', () => {
   });
 
   it('renders comp-off request rows after fetch', async () => {
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockResolvedValue(mockRequests);
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockResolvedValue(mockRequests);
     renderPage();
     await waitFor(() => {
       expect(screen.getByTestId('comp-off-row-co-1')).toBeInTheDocument();
@@ -116,7 +116,7 @@ describe('CompOffListPage', () => {
   });
 
   it('shows approve and reject buttons only for pending requests', async () => {
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockResolvedValue(mockRequests);
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockResolvedValue(mockRequests);
     renderPage();
     await waitFor(() => screen.getByTestId('approve-btn-co-1'));
     expect(screen.getByTestId('approve-btn-co-1')).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe('CompOffListPage', () => {
   });
 
   it('shows error alert when fetch fails', async () => {
-    (compOffApi.fetchCompOffRequests as jest.Mock).mockRejectedValue(new Error('Network error'));
+    (compOffApi.fetchCompOffRequests as vi.Mock).mockRejectedValue(new Error('Network error'));
     renderPage();
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();

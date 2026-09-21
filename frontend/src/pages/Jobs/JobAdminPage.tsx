@@ -136,7 +136,7 @@ const JobAdminPage: React.FC = () => {
                 : jobs.map((job) => (
                     <TableRow key={job.jobName}>
                       <TableCell data-testid={`job-status-${job.jobName}`}>
-                        <Typography variant="body2" fontWeight="medium">
+                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                           {job.jobName}
                         </Typography>
                         {!job.isEnabled && (
@@ -144,7 +144,7 @@ const JobAdminPage: React.FC = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Typography variant="caption" fontFamily="monospace">
+                        <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
                           {job.cronExpression || '—'}
                         </Typography>
                       </TableCell>

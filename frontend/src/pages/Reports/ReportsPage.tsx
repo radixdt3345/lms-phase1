@@ -23,7 +23,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
 import { loadReportJobs, generateReport } from '../../store/reportSlice';
-import { downloadReport, ReportType } from '../../api/reportApi';
+import { downloadReport } from '../../api/reportApi';
+import type { ReportType } from '../../api/reportApi';
 
 const REPORT_TYPES: { value: ReportType; label: string }[] = [
   { value: 'LeaveSummary', label: 'Leave Summary' },
@@ -86,7 +87,7 @@ const ReportsPage: React.FC = () => {
 
   return (
     <Box data-testid="reports-page" sx={{ p: 3 }}>
-      <Typography variant="h5" fontWeight={600} mb={3}>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
         Reports &amp; CSV Export
       </Typography>
 
@@ -98,7 +99,7 @@ const ReportsPage: React.FC = () => {
 
       {/* Report generation form */}
       <Paper variant="outlined" sx={{ p: 3, mb: 4 }}>
-        <Typography variant="subtitle1" fontWeight={600} mb={2}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
           Generate New Report
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -124,8 +125,7 @@ const ReportsPage: React.FC = () => {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            inputProps={{ 'data-testid': 'start-date-input' }}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ htmlInput: { 'data-testid': 'start-date-input' }, inputLabel: { shrink: true } }}
             sx={{ minWidth: 160 }}
           />
 
@@ -134,8 +134,7 @@ const ReportsPage: React.FC = () => {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            inputProps={{ 'data-testid': 'end-date-input' }}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ htmlInput: { 'data-testid': 'end-date-input' }, inputLabel: { shrink: true } }}
             sx={{ minWidth: 160 }}
           />
 
@@ -143,7 +142,7 @@ const ReportsPage: React.FC = () => {
             label="Department ID (optional)"
             value={departmentId}
             onChange={(e) => setDepartmentId(e.target.value)}
-            inputProps={{ 'data-testid': 'department-id-input' }}
+            slotProps={{ htmlInput: { 'data-testid': 'department-id-input' } }}
             sx={{ minWidth: 200 }}
           />
 
@@ -160,7 +159,7 @@ const ReportsPage: React.FC = () => {
       </Paper>
 
       {/* Reports history table */}
-      <Typography variant="subtitle1" fontWeight={600} mb={2}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
         Report History
       </Typography>
 

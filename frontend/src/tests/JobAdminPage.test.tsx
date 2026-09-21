@@ -7,8 +7,8 @@ import JobAdminPage from '../pages/Jobs/JobAdminPage';
 import jobReducer from '../store/jobSlice';
 
 // Mock API module
-jest.mock('../api/jobApi', () => ({
-  fetchJobStatuses: jest.fn().mockResolvedValue([
+vi.mock('../api/jobApi', () => ({
+  fetchJobStatuses: vi.fn().mockResolvedValue([
     {
       jobName: 'LeaveBalanceSyncJob',
       cronExpression: '0 0 * * *',
@@ -37,7 +37,7 @@ jest.mock('../api/jobApi', () => ({
       isEnabled: false,
     },
   ]),
-  triggerJob: jest.fn().mockResolvedValue(true),
+  triggerJob: vi.fn().mockResolvedValue(true),
 }));
 
 function makeStore() {
@@ -91,7 +91,8 @@ test('UT-FE-J-04: renders trigger-job-btn for each job', async () => {
 
 // UT-FE-J-05: Trigger button calls triggerJob
 test('UT-FE-J-05: clicking trigger-job-btn calls triggerJob API', async () => {
-  const { triggerJob } = require('../api/jobApi');
+  const jobApiMod = await import('../api/jobApi');
+  const { triggerJob } = jobApiMod;
   renderPage();
   await waitFor(() => {
     expect(screen.getByTestId('trigger-job-btn-LeaveBalanceSyncJob')).toBeInTheDocument();
@@ -121,8 +122,8 @@ test('UT-FE-J-07: trigger button is disabled for disabled job (EmailDispatchJob)
 
 // UT-FE-J-08: Error state renders alert
 test('UT-FE-J-08: renders error alert when API fails', async () => {
-  const { fetchJobStatuses } = require('../api/jobApi');
-  fetchJobStatuses.mockRejectedValueOnce(new Error('Network failure'));
+  const jobApiMod = await import('../api/jobApi');
+  vi.mocked(jobApiMod.fetchJobStatuses).mockRejectedValueOnce(new Error('Network failure'));
 
   render(
     <Provider store={makeStore()}>

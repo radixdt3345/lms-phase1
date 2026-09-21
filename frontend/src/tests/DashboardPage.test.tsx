@@ -6,14 +6,14 @@ import DashboardPage from '../pages/Dashboard/DashboardPage';
 import dashboardReducer from '../store/dashboardSlice';
 import * as dashboardApi from '../api/dashboardApi';
 
-jest.mock('../api/dashboardApi', () => ({
-  fetchDashboardOverview: jest.fn(),
-  fetchTeamLeave: jest.fn(),
-  fetchApprovalSummary: jest.fn(),
-  fetchCompOffSummary: jest.fn(),
+vi.mock('../api/dashboardApi', () => ({
+  fetchDashboardOverview: vi.fn(),
+  fetchTeamLeave: vi.fn(),
+  fetchApprovalSummary: vi.fn(),
+  fetchCompOffSummary: vi.fn(),
 }));
 
-const mockApi = dashboardApi as jest.Mocked<typeof dashboardApi>;
+const mockApi = dashboardApi as vi.Mocked<typeof dashboardApi>;
 
 const mockOverview: dashboardApi.OverviewDashboardDto = {
   totalEmployees: 150,
@@ -98,7 +98,7 @@ const renderPage = (preloadedState?: any) => {
 
 describe('DashboardPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // Scenario 1: Renders the page container

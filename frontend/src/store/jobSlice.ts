@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchJobStatuses, triggerJob, JobStatusDto } from '../api/jobApi';
+import { fetchJobStatuses, triggerJob } from '../api/jobApi';
+import type { JobStatusDto } from '../api/jobApi';
 
 interface JobState {
   jobs: JobStatusDto[];

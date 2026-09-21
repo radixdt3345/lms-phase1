@@ -55,16 +55,16 @@ const STATS = { pending: 2, approved: 10, rejected: 3 };
 
 // ── Mock approvalApi ────────────────────────────────────────────────────────
 
-jest.mock('../api/approvalApi', () => ({
-  fetchPendingApprovals: jest.fn(),
-  fetchApprovalHistory: jest.fn(),
-  fetchApprovalStats: jest.fn(),
-  escalateApproval: jest.fn(),
+vi.mock('../api/approvalApi', () => ({
+  fetchPendingApprovals: vi.fn(),
+  fetchApprovalHistory: vi.fn(),
+  fetchApprovalStats: vi.fn(),
+  escalateApproval: vi.fn(),
 }));
 
 // ── Mock MUI DataGrid ───────────────────────────────────────────────────────
 
-jest.mock('@mui/x-data-grid', () => ({
+vi.mock('@mui/x-data-grid', () => ({
   DataGrid: ({
     rows,
     columns,
@@ -131,14 +131,14 @@ function renderSidebarWithRoles(roles: string[]) {
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 beforeEach(() => {
-  (approvalApi.fetchPendingApprovals as jest.Mock).mockResolvedValue(PENDING_APPROVALS);
-  (approvalApi.fetchApprovalHistory as jest.Mock).mockResolvedValue(HISTORY_RECORDS);
-  (approvalApi.fetchApprovalStats as jest.Mock).mockResolvedValue(STATS);
-  (approvalApi.escalateApproval as jest.Mock).mockResolvedValue(undefined);
+  (approvalApi.fetchPendingApprovals as vi.Mock).mockResolvedValue(PENDING_APPROVALS);
+  (approvalApi.fetchApprovalHistory as vi.Mock).mockResolvedValue(HISTORY_RECORDS);
+  (approvalApi.fetchApprovalStats as vi.Mock).mockResolvedValue(STATS);
+  (approvalApi.escalateApproval as vi.Mock).mockResolvedValue(undefined);
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // INT-01: Sidebar hides "Approvals" for Employee role
@@ -221,7 +221,7 @@ test('INT-08: switching to History tab renders approval history records', async 
 
 // INT-09: API error surfaces an alert on the dashboard
 test('INT-09: API failure renders an error alert on the approval dashboard', async () => {
-  (approvalApi.fetchPendingApprovals as jest.Mock).mockRejectedValueOnce(
+  (approvalApi.fetchPendingApprovals as vi.Mock).mockRejectedValueOnce(
     new Error('Server error'),
   );
 

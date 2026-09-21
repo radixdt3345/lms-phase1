@@ -1,12 +1,12 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchPendingApprovals,
   fetchApprovalHistory,
   fetchApprovalStats,
   escalateApproval,
-  PendingApproval,
-  ApprovalRecord,
 } from '../api/approvalApi';
+import type { PendingApproval, ApprovalRecord } from '../api/approvalApi';
 
 interface ApprovalStats {
   pending: number;

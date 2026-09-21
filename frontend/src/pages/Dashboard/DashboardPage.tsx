@@ -78,7 +78,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Box data-testid="dashboard-page" sx={{ p: 3 }}>
-      <Typography variant="h5" fontWeight={600} mb={3}>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
         Dashboard
       </Typography>
 
@@ -89,13 +89,13 @@ const DashboardPage: React.FC = () => {
       )}
 
       {/* Overview stat cards */}
-      <Grid container spacing={2} data-testid="overview-stats" mb={4}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid container spacing={2} data-testid="overview-stats" sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card data-testid="employee-count-card" variant="outlined">
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <PeopleIcon color="primary" sx={{ fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight={700}>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {overview?.totalEmployees ?? '--'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -106,12 +106,12 @@ const DashboardPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card data-testid="on-leave-count-card" variant="outlined">
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <EventBusyIcon color="warning" sx={{ fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight={700}>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {overview?.onLeaveToday ?? '--'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -122,12 +122,12 @@ const DashboardPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card data-testid="pending-approvals-card" variant="outlined">
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <PendingActionsIcon color="error" sx={{ fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight={700}>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {overview?.pendingApprovals ?? '--'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -138,12 +138,12 @@ const DashboardPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card data-testid="comp-off-credits-card" variant="outlined">
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <AccessTimeIcon color="success" sx={{ fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight={700}>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   {overview?.availableCompOffCredits ?? '--'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -224,17 +224,17 @@ const DashboardPage: React.FC = () => {
           <CircularProgress size={24} />
         ) : approvalSummary ? (
           <Box>
-            <Grid container spacing={2} mb={2}>
-              <Grid item>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid>
                 <Typography variant="body2">Pending: <strong>{approvalSummary.pendingCount}</strong></Typography>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Typography variant="body2">Approved Today: <strong>{approvalSummary.approvedToday}</strong></Typography>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Typography variant="body2">Rejected Today: <strong>{approvalSummary.rejectedToday}</strong></Typography>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Typography variant="body2">Avg Turnaround: <strong>{approvalSummary.averageTurnaroundHours}h</strong></Typography>
               </Grid>
             </Grid>
@@ -282,14 +282,14 @@ const DashboardPage: React.FC = () => {
           <CircularProgress size={24} />
         ) : compOffSummary ? (
           <Box>
-            <Grid container spacing={2} mb={2}>
-              <Grid item>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid>
                 <Typography variant="body2">Total Credits Available: <strong>{compOffSummary.totalCreditsAvailable}</strong></Typography>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Typography variant="body2">Expiring This Month: <strong>{compOffSummary.expiringThisMonth}</strong></Typography>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Typography variant="body2">Credits Used This Month: <strong>{compOffSummary.creditsUsedThisMonth}</strong></Typography>
               </Grid>
             </Grid>

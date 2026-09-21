@@ -22,12 +22,12 @@ import NotificationsPage from '../pages/Notifications/NotificationsPage';
 import NotificationBell from '../components/NotificationBell/NotificationBell';
 
 // ── Mock API modules ──────────────────────────────────────────────────────────
-jest.mock('../api/notificationApi', () => ({
-  fetchNotifications: jest.fn(),
-  getUnreadCount: jest.fn(),
-  markRead: jest.fn(),
-  markAllRead: jest.fn(),
-  deleteNotification: jest.fn(),
+vi.mock('../api/notificationApi', () => ({
+  fetchNotifications: vi.fn(),
+  getUnreadCount: vi.fn(),
+  markRead: vi.fn(),
+  markAllRead: vi.fn(),
+  deleteNotification: vi.fn(),
 }));
 
 import {
@@ -37,10 +37,10 @@ import {
   deleteNotification,
 } from '../api/notificationApi';
 
-const mockFetch = fetchNotifications as jest.Mock;
-const mockUnreadCount = getUnreadCount as jest.Mock;
-const mockMarkRead = markRead as jest.Mock;
-const mockDelete = deleteNotification as jest.Mock;
+const mockFetch = fetchNotifications as vi.Mock;
+const mockUnreadCount = getUnreadCount as vi.Mock;
+const mockMarkRead = markRead as vi.Mock;
+const mockDelete = deleteNotification as vi.Mock;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const emptyPage = { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 };
@@ -87,7 +87,7 @@ const renderBell = (store = makeStore()) =>
 
 describe('F-09 Notifications INT layer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // UT-INT-NO-01: /notifications route renders NotificationsPage
@@ -157,8 +157,8 @@ describe('F-09 Notifications INT layer', () => {
 
   // UT-INT-NO-07: mark-all-read button dispatches action
   it('mark-all-read button calls markAllRead API', async () => {
-    const mockMarkAll = jest.fn().mockResolvedValue(true);
-    jest.requireMock('../api/notificationApi').markAllRead = mockMarkAll;
+    const mockMarkAll = vi.fn().mockResolvedValue(true);
+    vi.mocked(await import('../api/notificationApi')).markAllRead = mockMarkAll;
     mockUnreadCount.mockResolvedValue(0);
     mockFetch.mockResolvedValue({
       items: [sampleNotification],

@@ -133,7 +133,7 @@ const NotificationsPage: React.FC = () => {
               >
                 <ListItemText
                   primary={
-                    <Typography fontWeight={n.isRead ? 'normal' : 'bold'}>
+                    <Typography sx={{ fontWeight: n.isRead ? 'normal' : 'bold' }}>
                       {n.title}
                     </Typography>
                   }

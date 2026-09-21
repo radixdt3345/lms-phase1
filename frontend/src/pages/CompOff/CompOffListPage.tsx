@@ -81,19 +81,19 @@ const CompOffListPage: React.FC = () => {
                 Comp-Off Credits Balance
               </Typography>
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <Typography variant="body2" color="text.secondary">Total Earned</Typography>
                   <Typography variant="h4">{credits.totalCredits}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <Typography variant="body2" color="text.secondary">Used</Typography>
                   <Typography variant="h4">{credits.usedCredits}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <Typography variant="body2" color="text.secondary">Available</Typography>
                   <Typography variant="h4" color="success.main">{credits.availableCredits}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <Typography variant="body2" color="text.secondary">Expiring Soon</Typography>
                   <Typography variant="h4" color="warning.main">{credits.expiringCredits}</Typography>
                   {credits.expiryDate && (

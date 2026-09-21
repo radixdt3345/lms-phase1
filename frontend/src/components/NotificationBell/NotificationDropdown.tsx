@@ -66,7 +66,7 @@ const NotificationDropdown: React.FC<Props> = ({ anchorEl, onClose }) => {
             alignItems: 'center',
           }}
         >
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             Notifications
           </Typography>
           <Button
@@ -104,14 +104,14 @@ const NotificationDropdown: React.FC<Props> = ({ anchorEl, onClose }) => {
                     primary={
                       <Typography
                         variant="body2"
-                        fontWeight={n.isRead ? 'normal' : 'bold'}
+                        sx={{ fontWeight: n.isRead ? 'normal' : 'bold' }}
                       >
                         {n.title}
                       </Typography>
                     }
                     secondary={
                       <>
-                        <Typography variant="caption" display="block" color="text.secondary">
+                        <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
                           {n.body}
                         </Typography>
                         <Typography variant="caption" color="text.disabled">

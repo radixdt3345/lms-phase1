@@ -17,7 +17,8 @@ import {
   DialogActions,
   TextField,
 } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
+import type { GridColDef } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../store/store';
 import {
@@ -159,7 +160,7 @@ const ApprovalDashboardPage: React.FC = () => {
 
       {/* Stats cards */}
       <Grid container spacing={2} sx={{ mb: 3 }} data-testid="approval-stats">
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h3" color="warning.main">
@@ -171,7 +172,7 @@ const ApprovalDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h3" color="success.main">
@@ -183,7 +184,7 @@ const ApprovalDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h3" color="error.main">

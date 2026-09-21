@@ -76,7 +76,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
   const drawerContent = (
     <Box data-testid="sidebar-nav">
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" fontWeight={700} color="primary">
+        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700 }} color="primary">
           LMS
         </Typography>
       </Toolbar>
@@ -94,7 +94,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
               sx={{ borderRadius: 1, mx: 0.5, mb: 0.25 }}
             >
               <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14 }} />
+              <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontSize: 14 } } }} />
             </ListItemButton>
           </Tooltip>
         ))}
@@ -121,7 +121,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
                   sx={{ borderRadius: 1, mx: 0.5, mb: 0.25 }}
                 >
                   <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14 }} />
+                  <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontSize: 14 } } }} />
                 </ListItemButton>
               </Tooltip>
             ))}
@@ -150,7 +150,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
                   sx={{ borderRadius: 1, mx: 0.5, mb: 0.25 }}
                 >
                   <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14 }} />
+                  <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontSize: 14 } } }} />
                 </ListItemButton>
               </Tooltip>
             ))}

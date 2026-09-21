@@ -7,14 +7,14 @@ import leaveBalanceReducer from '../store/leaveBalanceSlice';
 import * as leaveBalanceApi from '../api/leaveBalanceApi';
 
 // Mock the API module — all mock return values use response.data.data pattern via the module mock
-jest.mock('../api/leaveBalanceApi', () => ({
-  fetchMyLeaveBalances: jest.fn(),
-  fetchAllLeaveBalances: jest.fn(),
-  fetchLeaveBalancesByEmployee: jest.fn(),
-  adjustLeaveBalance: jest.fn(),
+vi.mock('../api/leaveBalanceApi', () => ({
+  fetchMyLeaveBalances: vi.fn(),
+  fetchAllLeaveBalances: vi.fn(),
+  fetchLeaveBalancesByEmployee: vi.fn(),
+  adjustLeaveBalance: vi.fn(),
 }));
 
-const mockApi = leaveBalanceApi as jest.Mocked<typeof leaveBalanceApi>;
+const mockApi = leaveBalanceApi as vi.Mocked<typeof leaveBalanceApi>;
 
 const mockBalances: leaveBalanceApi.LeaveBalanceDto[] = [
   {
@@ -70,7 +70,7 @@ const renderPage = (roles: string[] = []) => {
 
 describe('LeaveBalancePage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // Scenario 1: Renders the page container
@@ -83,7 +83,7 @@ describe('LeaveBalancePage', () => {
 
   // Scenario 2: Shows loading spinner while fetching
   it('shows loading spinner during fetch', () => {
-    mockApi.fetchMyLeaveBalances.mockReturnValue(new Promise(() => {}));
+    mockApi.fetchMyLeaveBalances.mockReturnValue(new Promise<leaveBalanceApi.LeaveBalanceDto[]>(() => {}));
     renderPage();
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });

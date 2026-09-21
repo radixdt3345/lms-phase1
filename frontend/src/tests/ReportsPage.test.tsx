@@ -6,14 +6,14 @@ import ReportsPage from '../pages/Reports/ReportsPage';
 import reportReducer from '../store/reportSlice';
 import * as reportApi from '../api/reportApi';
 
-jest.mock('../api/reportApi', () => ({
-  fetchReportJobs: jest.fn(),
-  requestReport: jest.fn(),
-  downloadReport: jest.fn(),
-  fetchReportJob: jest.fn(),
+vi.mock('../api/reportApi', () => ({
+  fetchReportJobs: vi.fn(),
+  requestReport: vi.fn(),
+  downloadReport: vi.fn(),
+  fetchReportJob: vi.fn(),
 }));
 
-const mockApi = reportApi as jest.Mocked<typeof reportApi>;
+const mockApi = reportApi as vi.Mocked<typeof reportApi>;
 
 const mockReportJob: reportApi.ReportJobDto = {
   id: 'job-001',
@@ -52,7 +52,7 @@ const renderPage = (preloadedState?: any) => {
 
 describe('ReportsPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // Scenario 1: Renders the page container

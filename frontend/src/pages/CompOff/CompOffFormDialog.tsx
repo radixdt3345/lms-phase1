@@ -67,8 +67,7 @@ const CompOffFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={workedDate}
           onChange={(e) => setWorkedDate(e.target.value)}
           margin="normal"
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ 'data-testid': 'worked-date-input' }}
+          slotProps={{ inputLabel: { shrink: true }, htmlInput: { 'data-testid': 'worked-date-input' } }}
         />
         <TextField
           fullWidth
@@ -77,7 +76,7 @@ const CompOffFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={hoursWorked}
           onChange={(e) => setHoursWorked(e.target.value)}
           margin="normal"
-          inputProps={{ 'data-testid': 'hours-input', min: 4, max: 24, step: 0.5 }}
+          slotProps={{ htmlInput: { 'data-testid': 'hours-input', min: 4, max: 24, step: 0.5 } }}
           helperText="Minimum 4 hours. 4-7.5 hours = 0.5 day credit; 8+ hours = 1 day credit."
         />
         <TextField
@@ -88,7 +87,7 @@ const CompOffFormDialog: React.FC<Props> = ({ open, onClose }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           margin="normal"
-          inputProps={{ 'data-testid': 'description-input' }}
+          slotProps={{ htmlInput: { 'data-testid': 'description-input' } }}
         />
       </DialogContent>
       <DialogActions>

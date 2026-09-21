@@ -1,13 +1,13 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchNotifications,
   getUnreadCount,
   markAllRead,
   markRead,
   deleteNotification,
-  NotificationDto,
-  NotificationPageDto,
 } from '../api/notificationApi';
+import type { NotificationDto, NotificationPageDto } from '../api/notificationApi';
 
 interface NotificationState {
   notifications: NotificationDto[];

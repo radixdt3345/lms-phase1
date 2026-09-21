@@ -20,20 +20,20 @@ import authReducer from '../store/authSlice';
 import CompOffListPage from '../pages/CompOff/CompOffListPage';
 
 // ── Mock API modules ──────────────────────────────────────────────────────────
-jest.mock('../api/compOffApi', () => ({
-  fetchCompOffRequests: jest.fn(),
-  fetchCompOffCredits: jest.fn(),
-  createCompOffRequest: jest.fn(),
-  approveCompOffRequest: jest.fn(),
-  rejectCompOffRequest: jest.fn(),
+vi.mock('../api/compOffApi', () => ({
+  fetchCompOffRequests: vi.fn(),
+  fetchCompOffCredits: vi.fn(),
+  createCompOffRequest: vi.fn(),
+  approveCompOffRequest: vi.fn(),
+  rejectCompOffRequest: vi.fn(),
 }));
 
-jest.mock('../api/notificationApi', () => ({
-  getUnreadCount: jest.fn().mockResolvedValue(0),
-  fetchNotifications: jest.fn().mockResolvedValue({ data: [], totalCount: 0, page: 1, pageSize: 20 }),
-  markRead: jest.fn(),
-  markAllRead: jest.fn(),
-  deleteNotification: jest.fn(),
+vi.mock('../api/notificationApi', () => ({
+  getUnreadCount: vi.fn().mockResolvedValue(0),
+  fetchNotifications: vi.fn().mockResolvedValue({ data: [], totalCount: 0, page: 1, pageSize: 20 }),
+  markRead: vi.fn(),
+  markAllRead: vi.fn(),
+  deleteNotification: vi.fn(),
 }));
 
 import {
@@ -41,8 +41,8 @@ import {
   fetchCompOffCredits,
 } from '../api/compOffApi';
 
-const mockFetchRequests = fetchCompOffRequests as jest.Mock;
-const mockFetchCredits = fetchCompOffCredits as jest.Mock;
+const mockFetchRequests = fetchCompOffRequests as vi.Mock;
+const mockFetchCredits = fetchCompOffCredits as vi.Mock;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const makeStore = () =>
@@ -91,7 +91,7 @@ const renderPage = (store = makeStore()) =>
 
 describe('F-07 Comp-Off INT layer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // UT-INT-CO-01: /comp-off route renders CompOffListPage

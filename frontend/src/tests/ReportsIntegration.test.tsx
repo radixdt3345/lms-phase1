@@ -8,7 +8,7 @@ import authReducer from '../store/authSlice';
 import * as reportApi from '../api/reportApi';
 import ReportsPage from '../pages/Reports/ReportsPage';
 
-jest.mock('../api/reportApi');
+vi.mock('../api/reportApi');
 
 const mockReportJobs = [
   {
@@ -59,11 +59,11 @@ const renderReports = (roles: string[] = ['HRAdmin']) => {
 
 describe('Reports Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (reportApi.fetchReportJobs as jest.Mock).mockResolvedValue(mockReportJobs);
-    (reportApi.requestReport as jest.Mock).mockResolvedValue(mockNewJob);
-    (reportApi.fetchReportJob as jest.Mock).mockResolvedValue(mockReportJobs[0]);
-    (reportApi.downloadReport as jest.Mock).mockResolvedValue(new Blob(['col1,col2'], { type: 'text/csv' }));
+    vi.clearAllMocks();
+    (reportApi.fetchReportJobs as vi.Mock).mockResolvedValue(mockReportJobs);
+    (reportApi.requestReport as vi.Mock).mockResolvedValue(mockNewJob);
+    (reportApi.fetchReportJob as vi.Mock).mockResolvedValue(mockReportJobs[0]);
+    (reportApi.downloadReport as vi.Mock).mockResolvedValue(new Blob(['col1,col2'], { type: 'text/csv' }));
   });
 
   it('INT-RPT-01: /reports route renders ReportsPage without crashing', async () => {

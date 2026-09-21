@@ -1,10 +1,10 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchReportJobs,
   requestReport,
-  ReportJobDto,
-  ReportType,
 } from '../api/reportApi';
+import type { ReportJobDto, ReportType } from '../api/reportApi';
 
 interface ReportState {
   reportJobs: ReportJobDto[];

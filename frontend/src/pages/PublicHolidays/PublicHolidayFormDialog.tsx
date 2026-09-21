@@ -86,7 +86,7 @@ const PublicHolidayFormDialog: React.FC<Props> = ({ open, onClose, holiday, year
             value={countryCode}
             onChange={(e) => setCountryCode(e.target.value)}
             fullWidth
-            inputProps={{ maxLength: 2, 'data-testid': 'holiday-country-input' }}
+            slotProps={{ htmlInput: { maxLength: 2, 'data-testid': 'holiday-country-input' } }}
           />
           <TextField
             label="Description (optional)"
