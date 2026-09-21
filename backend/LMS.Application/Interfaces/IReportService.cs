@@ -1,3 +1,5 @@
+using LMS.Application.DTOs.Report;
+
 namespace LMS.Application.Interfaces;
 
 /// <summary>

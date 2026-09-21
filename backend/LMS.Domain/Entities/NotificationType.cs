@@ -30,22 +30,5 @@ public static class NotificationType
     public const string SystemAlert = "system_alert";
 }
 
-/// <summary>
-/// Email delivery status constants for the notifications.email_status column.
-/// These values match the CHECK constraint in migration 20260918040000_UpdateNotificationsEmailStatus.
-/// </summary>
-public static class NotificationEmailStatus
-{
-    /// <summary>Email is queued for delivery via SendGrid.</summary>
-    public const string Queued = "QUEUED";
-
-    /// <summary>Email was successfully delivered.</summary>
-    public const string Sent = "SENT";
-
-    /// <summary>All delivery retries exhausted — email could not be delivered.</summary>
-    public const string DeliveryFailed = "DELIVERY_FAILED";
-
-    // Legacy values kept for backward compatibility with existing rows
-    public const string NotSent = "not_sent";
-    public const string Pending = "pending";
-}
+// NotificationEmailStatus is defined in Notification.cs (same namespace).
+// Do not redefine here — CS0101 duplicate type.

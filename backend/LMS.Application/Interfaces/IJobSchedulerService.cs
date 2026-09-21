@@ -21,4 +21,11 @@ public interface IJobSchedulerService
     /// Returns false if the job name is not recognised.
     /// </summary>
     Task<bool> TriggerJobAsync(string jobName, string? reason = null);
+
+    // --- Job runner methods — called by Hangfire via generic expression lambdas ---
+    // These must be on the interface so Hangfire can resolve them through DI.
+    Task RunLeaveBalanceSyncJobAsync();
+    Task RunCompOffExpiryJobAsync();
+    Task RunEmailDispatchJobAsync();
+    Task RunLeaveEscalationJobAsync();
 }
