@@ -50,7 +50,7 @@ const AppRouter: React.FC = () => {
           {/* Public route */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected routes — require Azure AD authentication */}
+          {/* F-11: Dashboard — Manager, HRAdmin, SuperAdmin */}
           <Route
             path="/dashboard"
             element={
@@ -59,6 +59,8 @@ const AppRouter: React.FC = () => {
               </LayoutRoute>
             }
           />
+
+          {/* Protected routes — require Azure AD authentication */}
           <Route
             path="/departments"
             element={
@@ -166,16 +168,6 @@ const AppRouter: React.FC = () => {
           <Route
             path="/leave-balance"
             element={<Navigate to="/leave-balances" replace />}
-          />
-
-          {/* F-11: Dashboard — Manager, HRAdmin, SuperAdmin */}
-          <Route
-            path="/dashboard"
-            element={
-              <LayoutRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
-                <DashboardPage />
-              </LayoutRoute>
-            }
           />
 
           {/* F-12: Reports & CSV Export — HRAdmin, SuperAdmin */}
