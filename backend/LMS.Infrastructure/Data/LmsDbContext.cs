@@ -51,6 +51,9 @@ public class LmsDbContext : DbContext
     // Audit Trail (F-13) — append-only, never updated or deleted
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    // Dashboards — computed cache snapshots (F-11)
+    public DbSet<DashboardCache> DashboardCaches => Set<DashboardCache>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
