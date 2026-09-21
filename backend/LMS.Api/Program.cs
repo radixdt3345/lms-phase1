@@ -46,6 +46,7 @@ builder.Services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();  // F-0
 builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();  // F-06: Leave Application & Workflow
 builder.Services.AddScoped<LMS.Infrastructure.Seed.DataSeeder>();
 builder.Services.AddScoped<IApprovalService, ApprovalService>();  // F-08: Approval Workflow
+builder.Services.AddScoped<IDashboardService, DashboardService>();  // F-11: Dashboards
 
 // F-09: Notifications & Email
 builder.Services.AddScoped<INotificationService, NotificationService>();
