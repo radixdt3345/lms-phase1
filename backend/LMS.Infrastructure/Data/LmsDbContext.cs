@@ -54,6 +54,9 @@ public class LmsDbContext : DbContext
     // Dashboards — computed cache snapshots (F-11)
     public DbSet<DashboardCache> DashboardCaches => Set<DashboardCache>();
 
+    // Reports & CSV Export — async report job tracking (F-12)
+    public DbSet<ReportJob> ReportJobs => Set<ReportJob>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
