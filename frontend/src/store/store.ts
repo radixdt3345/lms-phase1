@@ -11,6 +11,8 @@ import leaveBalanceReducer from './leaveBalanceSlice';
 import notificationReducer from './notificationSlice';
 import jobReducer from './jobSlice';
 import approvalReducer from './approvalSlice';
+import dashboardReducer from './dashboardSlice';
+import reportReducer from './reportSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,8 @@ export const store = configureStore({
     notifications: notificationReducer,
     jobs: jobReducer,
     approvals: approvalReducer,
+    dashboard: dashboardReducer,
+    reports: reportReducer,
   },
 });
 
