@@ -27,6 +27,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import HistoryIcon from '@mui/icons-material/History';
 import WorkIcon from '@mui/icons-material/Work';
 import ApprovalIcon from '@mui/icons-material/HowToReg';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 const DRAWER_WIDTH = 240;
 
@@ -38,7 +39,6 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
   { label: 'Leave Requests', path: '/leave-requests', icon: <AssignmentIcon /> },
   { label: 'Leave Balances', path: '/leave-balances', icon: <BalanceIcon /> },
   { label: 'Comp Off', path: '/comp-off', icon: <BeachAccessIcon /> },
@@ -46,6 +46,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const APPROVER_NAV_ITEMS: NavItem[] = [
+  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon />, roles: ['Manager', 'HRAdmin', 'SuperAdmin'] },
   { label: 'Approvals', path: '/approvals', icon: <ApprovalIcon />, roles: ['Manager', 'HRAdmin', 'SuperAdmin'] },
 ];
 
@@ -56,6 +57,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: 'Public Holidays', path: '/public-holidays', icon: <PublicIcon />, roles: ['HRAdmin', 'SuperAdmin'] },
   { label: 'Audit Trail', path: '/audit-trail', icon: <HistoryIcon />, roles: ['HRAdmin', 'SuperAdmin'] },
   { label: 'Job Admin', path: '/admin/jobs', icon: <WorkIcon />, roles: ['HRAdmin', 'SuperAdmin'] },
+  { label: 'Reports', path: '/reports', icon: <AssessmentIcon />, roles: ['HRAdmin', 'SuperAdmin'] },
 ];
 
 interface AppLayoutProps {
@@ -104,7 +106,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, userRoles = [] }) => {
             variant="caption"
             sx={{ px: 2, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5 }}
           >
-            Approvals
+            Management
           </Typography>
           <List>
             {APPROVER_NAV_ITEMS.map((item) => (
