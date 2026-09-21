@@ -18,10 +18,8 @@ const LeaveBalancePage = lazy(() => import('../pages/LeaveBalance/LeaveBalancePa
 const NotificationsPage = lazy(() => import('../pages/Notifications/NotificationsPage'));
 const JobAdminPage = lazy(() => import('../pages/Jobs/JobAdminPage'));
 const ApprovalDashboardPage = lazy(() => import('../pages/Approvals/ApprovalDashboardPage'));
-
-const DashboardPlaceholder: React.FC = () => (
-  <div>Dashboard - Coming Soon</div>
-);
+const DashboardPage = lazy(() => import('../pages/Dashboard/DashboardPage'));
+const ReportsPage = lazy(() => import('../pages/Reports/ReportsPage'));
 
 const LoadingFallback = (
   <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -56,8 +54,8 @@ const AppRouter: React.FC = () => {
           <Route
             path="/dashboard"
             element={
-              <LayoutRoute>
-                <DashboardPlaceholder />
+              <LayoutRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
+                <DashboardPage />
               </LayoutRoute>
             }
           />
@@ -168,6 +166,26 @@ const AppRouter: React.FC = () => {
           <Route
             path="/leave-balance"
             element={<Navigate to="/leave-balances" replace />}
+          />
+
+          {/* F-11: Dashboard — Manager, HRAdmin, SuperAdmin */}
+          <Route
+            path="/dashboard"
+            element={
+              <LayoutRoute requiredRoles={['Manager', 'HRAdmin', 'SuperAdmin']}>
+                <DashboardPage />
+              </LayoutRoute>
+            }
+          />
+
+          {/* F-12: Reports & CSV Export — HRAdmin, SuperAdmin */}
+          <Route
+            path="/reports"
+            element={
+              <LayoutRoute requiredRoles={['HRAdmin', 'SuperAdmin']}>
+                <ReportsPage />
+              </LayoutRoute>
+            }
           />
 
           {/* Catch-all — redirect to login */}
