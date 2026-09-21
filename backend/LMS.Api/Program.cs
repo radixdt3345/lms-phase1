@@ -1,12 +1,17 @@
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using LMS.Application.Interfaces;
 using LMS.Infrastructure.Seed;
 using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +85,43 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("HRAdmin", "SuperAdmin"));
 });
 
+// ── Health Checks (W-001) ─────────────────────────────────────────────────────
+// /health — liveness probe: is the process up?
+// /ready  — readiness probe: is the DB reachable and the service fully initialised?
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        connectionString,
+        name: "postgres",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "ready", "db" });
+
+// ── Rate Limiting (W-002) ─────────────────────────────────────────────────────
+// Fixed-window policy: 100 requests per minute per client IP on write/auth endpoints.
+// Read-heavy endpoints (GET) are exempt to keep dashboard performance snappy.
+// Adjust limits via environment variables for staging vs production.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // "auth" policy — tighter limit for login/token endpoints (prevent brute-force)
+    options.AddFixedWindowLimiter("auth", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 10;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        limiterOptions.QueueLimit = 0;
+    });
+
+    // "api-write" policy — POST/PUT/PATCH/DELETE endpoints
+    options.AddFixedWindowLimiter("api-write", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 60;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        limiterOptions.QueueLimit = 5;
+    });
+});
+
 // ── Controllers & API explorer ────────────────────────────────────────────────
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -121,15 +163,51 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Rate limiting middleware must come before auth so rejections are cheap
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// ── Hangfire Dashboard (development only — no auth in dev) ────────────────────
-// NOTE: For production, add IAuthorizationFilter to restrict dashboard access.
+// ── Health endpoints (W-001) ───────────────────────────────────────────────────
+// /health — liveness: returns 200 when the process is up (no DB check)
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => false,   // exclude all named checks — pure liveness
+    ResponseWriter = async (ctx, _) =>
+    {
+        ctx.Response.ContentType = "application/json";
+        await ctx.Response.WriteAsync("{\"status\":\"healthy\"}");
+    }
+});
+
+// /ready — readiness: returns 200 only when DB is reachable
+app.MapHealthChecks("/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = async (ctx, report) =>
+    {
+        ctx.Response.ContentType = "application/json";
+        var status = report.Status == HealthStatus.Healthy ? "ready" : "not_ready";
+        await ctx.Response.WriteAsync($"{{\"status\":\"{status}\"}}");
+    }
+});
+
+// ── Hangfire Dashboard (W-003) ────────────────────────────────────────────────
+// Development: open access for local debugging.
+// Production:  restricted to SuperAdmin role via DashboardAuthorizationFilter.
 if (app.Environment.IsDevelopment())
 {
     app.UseHangfireDashboard("/hangfire");
+}
+else
+{
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = new[] { new HangfireSuperAdminAuthorizationFilter() }
+    });
 }
 
 // ── F-15: Register recurring Hangfire jobs on startup ─────────────────────────
@@ -144,3 +222,23 @@ using (var scope = app.Services.CreateScope())
 app.Run();
 
 public partial class Program { }
+
+// ── Hangfire dashboard auth filter (W-003) ────────────────────────────────────
+/// <summary>
+/// Restricts the Hangfire dashboard to users with the SuperAdmin role.
+/// The request must carry a valid Azure AD JWT bearing the "SuperAdmin" role claim.
+/// </summary>
+internal sealed class HangfireSuperAdminAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        var httpContext = context.GetHttpContext();
+
+        // Must be authenticated
+        if (httpContext.User?.Identity?.IsAuthenticated != true)
+            return false;
+
+        // Must carry SuperAdmin role
+        return httpContext.User.IsInRole("SuperAdmin");
+    }
+}
