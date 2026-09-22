@@ -79,7 +79,7 @@ public class ReportServiceTests
 
         userAJobs.Should().HaveCount(2);
         userBJobs.Should().HaveCount(1);
-        userAJobs.Should().OnlyContain(j => j.ReportType is "LeaveSummary" or "CompOffSummary");
+        userAJobs.Should().OnlyContain(j => j.ReportType == "LeaveSummary" || j.ReportType == "CompOffSummary");
     }
 
     [Fact]

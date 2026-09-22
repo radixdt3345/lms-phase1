@@ -15,6 +15,8 @@
     <!-- F-15: Hangfire background job scheduler with PostgreSQL storage -->
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.*" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.20.*" />
+    <!-- W-001: PostgreSQL health check for /ready endpoint -->
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LMS.Application\LMS.Application.csproj" />
